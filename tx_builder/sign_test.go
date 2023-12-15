@@ -29,7 +29,7 @@ func TestSignTx1(t *testing.T) {
 	amount := uint64(100000)
 	fee := uint64(100000)
 
-	_, tx, err := BuildTxTransfer(refBlockNum, refBlockPrefix, fromAddr, toAddr, amount, fee)
+	_, _, tx, err := BuildTxTransfer(refBlockNum, refBlockPrefix, fromAddr, toAddr, amount, fee)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -76,7 +76,7 @@ func TestSignTx2(t *testing.T) {
 	issueAmount := resp.Result.Options.MaxPerMint
 	fee := uint64(100000)
 
-	_, tx, err := BuildTxMint(refBlockNum, refBlockPrefix, issueAddr, issueAssetId, int64(issueAssetIdNum), int64(issueAmount), fee)
+	_, _, tx, err := BuildTxMint(refBlockNum, refBlockPrefix, issueAddr, issueAssetId, int64(issueAssetIdNum), int64(issueAmount), fee)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -112,10 +112,11 @@ func TestBroadcastTx1(t *testing.T) {
 	amount := uint64(100000)
 	fee := uint64(100000)
 
-	_, tx, err := BuildTxTransfer(refBlockNum, refBlockPrefix, fromAddr, toAddr, amount, fee)
+	txHashCalc, _, tx, err := BuildTxTransfer(refBlockNum, refBlockPrefix, fromAddr, toAddr, amount, fee)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
+	fmt.Println("BuildTxTransfer txHash:", txHashCalc)
 
 	keyWif := "5JF7asAXBFzGbnLDdLyKqrkRGGKcSJByU22fvzejdU6TdLGimdf"
 	txSig, txSigned, err := SignTx(chainId, tx, keyWif)
@@ -165,10 +166,11 @@ func TestBroadcastTx2(t *testing.T) {
 	issueAmount := resp.Result.Options.MaxPerMint
 	fee := uint64(100000)
 
-	_, tx, err := BuildTxMint(refBlockNum, refBlockPrefix, issueAddr, issueAssetId, int64(issueAssetIdNum), int64(issueAmount), fee)
+	txHashCalc, _, tx, err := BuildTxMint(refBlockNum, refBlockPrefix, issueAddr, issueAssetId, int64(issueAssetIdNum), int64(issueAmount), fee)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
+	fmt.Println("BuildTxMint txHash:", txHashCalc)
 
 	keyWif := "5JF7asAXBFzGbnLDdLyKqrkRGGKcSJByU22fvzejdU6TdLGimdf"
 	txSig, txSigned, err := SignTx(chainId, tx, keyWif)

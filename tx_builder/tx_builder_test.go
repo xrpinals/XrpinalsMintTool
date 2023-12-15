@@ -27,7 +27,7 @@ func TestBuildTxTransfer(t *testing.T) {
 	amount := uint64(100000)
 	fee := uint64(100000)
 
-	txBytes, tx, _ := BuildTxTransfer(refBlockNum, refBlockPrefix, fromAddr, toAddr, amount, fee)
+	_, txBytes, tx, _ := BuildTxTransfer(refBlockNum, refBlockPrefix, fromAddr, toAddr, amount, fee)
 	fmt.Println("BuildTxTransfer Hex:", hex.EncodeToString(txBytes))
 	txJson, _ := json.Marshal(*tx)
 	fmt.Println("BuildTxTransfer Tx:", string(txJson))
@@ -56,7 +56,7 @@ func TestBuildTxMint(t *testing.T) {
 	issueAmount := resp.Result.Options.MaxPerMint
 	fee := uint64(100000)
 
-	txBytes, tx, _ := BuildTxMint(refBlockNum, refBlockPrefix, issueAddr, issueAssetId, int64(issueAssetIdNum), int64(issueAmount), fee)
+	_, txBytes, tx, _ := BuildTxMint(refBlockNum, refBlockPrefix, issueAddr, issueAssetId, int64(issueAssetIdNum), int64(issueAmount), fee)
 	fmt.Println("BuildTxMint Hex:", hex.EncodeToString(txBytes))
 	txJson, _ := json.Marshal(*tx)
 	fmt.Println("BuildTxMint Tx:", string(txJson))
