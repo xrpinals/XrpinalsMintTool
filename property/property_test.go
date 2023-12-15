@@ -8,7 +8,10 @@ import (
 
 func TestRFC3339ToUTC(t *testing.T) {
 	timeStr := "2019-09-21T07:44:30"
-	ts, _ := RFC3339ToUTC(timeStr)
+	ts, err := RFC3339ToUTC(timeStr)
+	if err != nil {
+		t.Fatal(err)
+	}
 	assert.Equal(t, uint64(1569051870), ts)
 	fmt.Println("RFC3339ToUTC:", ts)
 }
