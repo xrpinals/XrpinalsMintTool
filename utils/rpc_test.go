@@ -38,8 +38,8 @@ func TestGetAddressBalance(t *testing.T) {
 	fmt.Println(string(respBody))
 }
 
-func TestGetInfo(t *testing.T) {
-	resp, err := GetInfo(walletUrl)
+func TestGetChainId(t *testing.T) {
+	resp, err := GetChainId(walletUrl)
 	if err != nil {
 		t.Fatal(err.Error())
 	}

@@ -1,8 +1,6 @@
 package utils
 
 import (
-	"encoding/binary"
-	"encoding/hex"
 	"encoding/json"
 	"math/big"
 	"reflect"
@@ -109,7 +107,7 @@ type InfoResult struct {
 	ChainId string `json:"chain_id"`
 }
 
-func GetInfo(url string) (int64, error) {
+func GetChainId(url string) (string, error) {
 	assetInfoReq := RpcReq{
 		Id:     1,
 		Method: "info",
@@ -121,17 +119,14 @@ func GetInfo(url string) (int64, error) {
 	}.HttpPost(url, assetInfoReq)
 
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 
 	var response InfoRsp
 
 	err = json.Unmarshal(body, &response)
 
-	chainIDBytes, _ := hex.DecodeString(response.Result.ChainId)
-	chainID := int64(binary.LittleEndian.Uint16(chainIDBytes[0:2]))
-
-	return chainID, err
+	return response.Result.ChainId, err
 }
 
 type RefBlockInfoRsp struct {
@@ -163,4 +158,31 @@ func GetRefBlockInfo(url string) (uint16, uint32, error) {
 	refBlockPrefix, _ := strconv.ParseInt(l[1], 10, 64)
 
 	return uint16(refBlockNum), uint32(refBlockPrefix), nil
+}
+
+type BroadcastTxRsp struct {
+	Id     int    `json:"id"`
+	Result string `json:"result"`
+}
+
+func BroadcastTx(url string, signTx interface{}) (string, error) {
+	BroadcastTxReq := RpcReq{
+		Id:     1,
+		Method: "lightwallet_broadcast",
+		Params: []interface{}{signTx},
+	}
+
+	body, err := HttpClient{
+		Timeout: 30,
+	}.HttpPost(url, BroadcastTxReq)
+
+	if err != nil {
+		return "", err
+	}
+
+	var response BroadcastTxRsp
+
+	err = json.Unmarshal(body, &response)
+
+	return response.Result, err
 }

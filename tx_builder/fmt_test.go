@@ -57,11 +57,11 @@ func TestPubKeyToAddr(t *testing.T) {
 }
 
 func TestWifKeyToAddr(t *testing.T) {
-	wifKey := "5JuANbr9xBwz6ASN2ifEpcMkFPAUThBJGcVWj3TLpt6PhAXbpva"
+	wifKey := "5JF7asAXBFzGbnLDdLyKqrkRGGKcSJByU22fvzejdU6TdLGimdf"
 	addr, err := WifKeyToAddr(wifKey)
 	if err != nil {
 		t.Fatal(err)
 	}
 	fmt.Println("WifKeyToAddr:", addr)
-	assert.Equal(t, "mnQhe9c4dxq8nWkno41GEDxGL6N4w5AezR", addr)
+	assert.Equal(t, "mfhGJnP5T7A5kYDJNxnHozxrVzC7WKHzKs", addr)
 }

@@ -51,8 +51,8 @@ type OperationType interface {
 type Asset struct {
 	Amount         int64  `json:"amount"`
 	AssetId        string `json:"asset_id"`
-	AssetIdNum     int64
-	AssetPrecision int64
+	AssetIdNum     int64  `json:"-"`
+	AssetPrecision int64  `json:"-"`
 }
 
 func (a *Asset) SetDefault() {
@@ -199,7 +199,10 @@ func (to *MintOperation) Pack() []byte {
 	bytesRet = append(bytesRet, bytesAssetToIssue...)
 	//issue_to_account
 	bytesRet = append(bytesRet, byte(0))
+
+	bytesRet = append(bytesRet, byte(UseAddressPrefix))
 	bytesRet = append(bytesRet, to.IssueAddress[:]...)
+
 	//bos_token
 	bytesRet = append(bytesRet, byte(1))
 
