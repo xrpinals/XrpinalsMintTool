@@ -1,12 +1,18 @@
 package utils
 
 import (
+	"encoding/binary"
+	"encoding/hex"
 	"encoding/json"
+	"math/big"
+	"reflect"
+	"strconv"
+	"strings"
 )
 
-type BaseRsp struct {
-	Id     int         `json:"id"`
-	Result interface{} `json:"result"`
+type AssetInfoRsp struct {
+	Id     int             `json:"id"`
+	Result AssetInfoResult `json:"result"`
 }
 
 type AssetInfoResult struct {
@@ -27,11 +33,6 @@ type AssetInfoResult struct {
 		IssuerPermissions int    `json:"issuer_permissions"`
 		Flags             int    `json:"flags"`
 	} `json:"options"`
-}
-
-type AssetInfoRsp struct {
-	BaseRsp
-	AssetInfoResult
 }
 
 func GetAssetInfo(url string, assetName string) (rsp *AssetInfoRsp, err error) {
@@ -57,7 +58,7 @@ func GetAssetInfo(url string, assetName string) (rsp *AssetInfoRsp, err error) {
 }
 
 type AddressBalanceRsp struct {
-	BaseRsp
+	Id     int                    `json:"id"`
 	Result []AddressBalanceResult `json:"result"`
 }
 
@@ -66,7 +67,7 @@ type AddressBalanceResult struct {
 	AssetId string      `json:"asset_id"`
 }
 
-func GetAddressBalance(url, address string) (rsp *AddressBalanceRsp, err error) {
+func GetAddressBalance(url, address, assetId string) (*big.Int, error) {
 	assetInfoReq := RpcReq{
 		Id:     1,
 		Method: "get_addr_balances",
@@ -85,5 +86,81 @@ func GetAddressBalance(url, address string) (rsp *AddressBalanceRsp, err error) 
 
 	err = json.Unmarshal(body, &response)
 
-	return &response, nil
+	for _, k := range response.Result {
+		if k.AssetId == assetId {
+			typeStr := reflect.TypeOf(k.Amount).String()
+			if typeStr == "string" {
+				balance, err := strconv.ParseUint(k.Amount.(string), 10, 64)
+				return big.NewInt(int64(balance)), err
+			} else {
+				return big.NewInt(int64(k.Amount.(float64))), nil
+			}
+		}
+	}
+	return big.NewInt(0), nil
+}
+
+type InfoRsp struct {
+	Id     int        `json:"id"`
+	Result InfoResult `json:"result"`
+}
+
+type InfoResult struct {
+	ChainId string `json:"chain_id"`
+}
+
+func GetInfo(url string) (int64, error) {
+	assetInfoReq := RpcReq{
+		Id:     1,
+		Method: "info",
+		Params: []interface{}{},
+	}
+
+	body, err := HttpClient{
+		Timeout: 30,
+	}.HttpPost(url, assetInfoReq)
+
+	if err != nil {
+		return 0, err
+	}
+
+	var response InfoRsp
+
+	err = json.Unmarshal(body, &response)
+
+	chainIDBytes, _ := hex.DecodeString(response.Result.ChainId)
+	chainID := int64(binary.LittleEndian.Uint16(chainIDBytes[0:2]))
+
+	return chainID, err
+}
+
+type RefBlockInfoRsp struct {
+	Id     int    `json:"id"`
+	Result string `json:"result"`
+}
+
+func GetRefBlockInfo(url string) (uint16, uint32, error) {
+	assetInfoReq := RpcReq{
+		Id:     1,
+		Method: "lightwallet_get_refblock_info",
+		Params: []interface{}{},
+	}
+
+	body, err := HttpClient{
+		Timeout: 30,
+	}.HttpPost(url, assetInfoReq)
+
+	if err != nil {
+		return 0, 0, err
+	}
+
+	var response RefBlockInfoRsp
+
+	err = json.Unmarshal(body, &response)
+
+	l := strings.Split(response.Result, ",")
+	refBlockNum, _ := strconv.ParseInt(l[0], 10, 64)
+	refBlockPrefix, _ := strconv.ParseInt(l[1], 10, 64)
+
+	return uint16(refBlockNum), uint32(refBlockPrefix), nil
 }
