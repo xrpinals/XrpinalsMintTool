@@ -1,0 +1,10 @@
+{
+  "walletRpcUrl": "",
+  "assetName": "",
+  "logs": {
+    "logPath": "./log",
+    "level": "debug",
+    "maxSize": 10000000,
+    "backupCount": 5
+  }
+}
