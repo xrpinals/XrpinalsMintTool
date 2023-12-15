@@ -145,6 +145,73 @@ func (to *TransferOperation) Pack() []byte {
 	return bytesRet
 }
 
+type MintOperation struct {
+	Fee            Asset         `json:"fee"`
+	Issuer         string        `json:"issuer"`
+	AssetToIssue   Asset         `json:"asset_to_issue"`
+	IssueToAccount string        `json:"issue_to_account"`
+	IssueAddress   Address       `json:"issue_address"`
+	BosToken       bool          `json:"bos_token"`
+	Memo           *interface{}  `json:"memo,omitempty"`
+	Extensions     []interface{} `json:"extensions"`
+}
+
+func (to *MintOperation) SetValue(issueAddr string,
+	issueAssetId string, issueAssetIdNum int64, issueAmount int64, fee uint64) error {
+
+	to.Fee.SetDefault()
+	to.Fee.Amount = int64(fee)
+
+	to.Issuer = "1.2.0"
+
+	to.AssetToIssue.Amount = issueAmount
+	to.AssetToIssue.AssetId = issueAssetId
+	to.AssetToIssue.AssetIdNum = issueAssetIdNum
+
+	to.IssueToAccount = "1.2.0"
+
+	to.BosToken = true
+
+	to.Extensions = make([]interface{}, 0)
+
+	issueAddrHex, err := AddrToHexAddr(issueAddr)
+	if err != nil {
+		return err
+	}
+	issueAddrBytes, _ := hex.DecodeString(issueAddrHex)
+	to.IssueAddress.SetBytes(issueAddrBytes)
+
+	to.Memo = nil
+
+	return nil
+}
+
+func (to *MintOperation) Pack() []byte {
+	bytesRet := make([]byte, 0)
+
+	bytesFee := to.Fee.Pack()
+	bytesAssetToIssue := to.AssetToIssue.Pack()
+
+	bytesRet = append(bytesRet, bytesFee...)
+	//issuer
+	bytesRet = append(bytesRet, byte(0))
+
+	bytesRet = append(bytesRet, bytesAssetToIssue...)
+	//issue_to_account
+	bytesRet = append(bytesRet, byte(0))
+	bytesRet = append(bytesRet, to.IssueAddress[:]...)
+	//bos_token
+	bytesRet = append(bytesRet, byte(1))
+
+	// pack empty memo
+	bytesRet = append(bytesRet, byte(0))
+
+	// Extensions
+	bytesRet = append(bytesRet, PackVarInt(uint64(len(to.Extensions)))...)
+
+	return bytesRet
+}
+
 type OperationPair [2]interface{}
 
 type Transaction struct {
