@@ -9,4 +9,7 @@ require (
 	golang.org/x/crypto v0.16.0
 )
 
-require github.com/siddontang/go-log v0.0.0-20190221022429-1e957dd83bed
+require (
+	github.com/bitnexty/secp256k1-go v0.0.0-20190612083540-ca7e6894db32
+	github.com/siddontang/go-log v0.0.0-20190221022429-1e957dd83bed
+)

@@ -6,6 +6,26 @@ import (
 	"testing"
 )
 
+func TestWifKeyToHexKey(t *testing.T) {
+	wifKey := "5KcnSNrBJEdGAcmjVzzThtpncNtuZDDf74Fj81sEvYYkij7bs6u"
+	hexKey, err := WifKeyToHexKey(wifKey)
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Println("TestWifKeyToHexKey:", hexKey)
+	assert.Equal(t, "ed4640fd09578c07bc180298b8ea4f454d0daa2fff791b5f4b3e9ae42b0e4af5", hexKey)
+}
+
+func TestHexKeyToWifKey(t *testing.T) {
+	hexKey := "ed4640fd09578c07bc180298b8ea4f454d0daa2fff791b5f4b3e9ae42b0e4af5"
+	wifKey, err := HexKeyToWifKey(hexKey)
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Println("TestHexKeyToWifKey:", wifKey)
+	assert.Equal(t, "5KcnSNrBJEdGAcmjVzzThtpncNtuZDDf74Fj81sEvYYkij7bs6u", wifKey)
+}
+
 func TestAddrToHexAddr(t *testing.T) {
 	addr := "mumtmaYKH3ttGpVaAJRCiiWZsn5zAB9hU9"
 	hexAddr, err := AddrToHexAddr(addr)

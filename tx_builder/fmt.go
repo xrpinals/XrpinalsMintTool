@@ -30,6 +30,49 @@ const (
 	UseSecretPrefix = MainNetSecretPrefix
 )
 
+func WifKeyToHexKey(wifKey string) (string, error) {
+	keyBytes, err := base58.Decode(wifKey)
+	if err != nil {
+		return "", err
+	}
+	if len(keyBytes) != 37 {
+		return "", fmt.Errorf("invalid wif key")
+	}
+	return hex.EncodeToString(keyBytes[1:33]), nil
+}
+
+func HexKeyToWifKey(hexKey string) (string, error) {
+	hexKeyBytes, err := hex.DecodeString(hexKey)
+	if err != nil {
+		return "", err
+	}
+	if len(hexKeyBytes) != 32 {
+		return "", fmt.Errorf("invalid hex key")
+	}
+	calcBytes := make([]byte, 0)
+	calcBytes = append(calcBytes, UseSecretPrefix)
+	calcBytes = append(calcBytes, hexKeyBytes...)
+
+	// double sha256
+	s256 := sha256.New()
+	_, err = s256.Write(calcBytes)
+	if err != nil {
+		return "", err
+	}
+	checkSum := s256.Sum(nil)
+
+	s256 = sha256.New()
+	_, err = s256.Write(checkSum)
+	if err != nil {
+		return "", err
+	}
+	checkSum = s256.Sum(nil)
+
+	calcBytes = append(calcBytes, checkSum[0:4]...)
+
+	return base58.Encode(calcBytes), nil
+}
+
 func AddrToHexAddr(addr string) (string, error) {
 	addrBytes, err := base58.Decode(addr)
 	if err != nil {
