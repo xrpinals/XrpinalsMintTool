@@ -1,6 +1,6 @@
 module github.com/Xrpinals-Protocol/XrpinalsMintTool
 
-go 1.21.2
+go 1.16
 
 require (
 	github.com/ethereum/go-ethereum v1.13.5
