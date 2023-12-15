@@ -18,12 +18,18 @@ func TestNBits2Target(t *testing.T) {
 
 func TestGetTargetWork(t *testing.T) {
 	targetGenesis, _ := new(big.Int).SetString("00000000ffff0000000000000000000000000000000000000000000000000000", 16)
-	work, _ := GetTargetWork(targetGenesis)
+	work, err := GetTargetWork(targetGenesis)
+	if err != nil {
+		t.Fatal(err)
+	}
 	fmt.Println("Genesis work:", work)
 }
 
 func TestGetGenesisTargetWork(t *testing.T) {
-	work, _ := GetGenesisTargetWork()
+	work, err := GetGenesisTargetWork()
+	if err != nil {
+		t.Fatal(err)
+	}
 	fmt.Println("Genesis work:", work)
 }
 
@@ -34,13 +40,19 @@ func TestGetNBitsDiff(t *testing.T) {
 
 func TestGetTargetDiff(t *testing.T) {
 	targetGenesis, _ := new(big.Int).SetString("00000000ffff0000000000000000000000000000000000000000000000000000", 16)
-	diff, _ := GetTargetDiff(targetGenesis)
+	diff, err := GetTargetDiff(targetGenesis)
+	if err != nil {
+		t.Fatal(err)
+	}
 	fmt.Println("Genesis diff:", diff)
 	assert.Equal(t, 1.0, diff)
 }
 
 func TestGetDiffWork(t *testing.T) {
-	work, _ := GetDiffWork(1.0)
+	work, err := GetDiffWork(1.0)
+	if err != nil {
+		t.Fatal(err)
+	}
 	fmt.Println("Genesis work:", work)
 }
 
@@ -49,11 +61,17 @@ func TestGetHashRateByWork(t *testing.T) {
 }
 
 func TestGetHashRateByDiff(t *testing.T) {
-	hashRate, _ := GetHashRateByDiff(19.16*math.Pow(10.0, 12), 600, "e")
+	hashRate, err := GetHashRateByDiff(19.16*math.Pow(10.0, 12), 600, "e")
+	if err != nil {
+		t.Fatal(err)
+	}
 	fmt.Printf("hashrate: %f EHash/s", hashRate)
 }
 
 func TestGetHashRateByNBits(t *testing.T) {
-	hashRate, _ := GetHashRateByNBits(0x170eb156, 600, "e")
+	hashRate, err := GetHashRateByNBits(0x170eb156, 600, "e")
+	if err != nil {
+		t.Fatal(err)
+	}
 	fmt.Printf("hashrate: %f EHash/s", hashRate)
 }

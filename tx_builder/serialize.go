@@ -164,9 +164,9 @@ func (to *TransferOperation) Pack() []byte {
 	//to
 	bytesRet = append(bytesRet, byte(0))
 
-	bytesRet = append(bytesRet, byte(UsePrefix))
+	bytesRet = append(bytesRet, byte(UseAddressPrefix))
 	bytesRet = append(bytesRet, to.FromAddr[:]...)
-	bytesRet = append(bytesRet, byte(UsePrefix))
+	bytesRet = append(bytesRet, byte(UseAddressPrefix))
 	bytesRet = append(bytesRet, to.ToAddr[:]...)
 	bytesRet = append(bytesRet, bytesAmount...)
 

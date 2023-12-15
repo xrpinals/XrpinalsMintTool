@@ -17,9 +17,10 @@ const (
 	// HashLength is the expected length of the hash
 	HashLength = 20
 	// AddressLength is the expected length of the address
-	AddressLength  = 20
-	PubKeyLength   = 33
-	CheckSumLength = 4
+	AddressLength    = 20
+	PrivateKeyLength = 32
+	PubKeyLength     = 33
+	CheckSumLength   = 4
 )
 
 var (
