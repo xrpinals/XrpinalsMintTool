@@ -14,7 +14,7 @@ const (
 )
 
 func BuildTxTransfer(refBlockNum uint16, refBlockPrefix uint32,
-	fromAddr string, toAddr string, amount uint64, fee uint64, memo string) ([]byte, *Transaction, error) {
+	fromAddr string, toAddr string, amount uint64, fee uint64) ([]byte, *Transaction, error) {
 
 	var tx Transaction
 	tx.RefBlockNum = refBlockNum
@@ -25,7 +25,7 @@ func BuildTxTransfer(refBlockNum uint16, refBlockPrefix uint32,
 	tx.Signatures = make([]Signature, 0)
 
 	var op TransferOperation
-	err := op.SetValue(fromAddr, toAddr, amount, fee, memo)
+	err := op.SetValue(fromAddr, toAddr, amount, fee)
 	if err != nil {
 		return nil, nil, err
 	}

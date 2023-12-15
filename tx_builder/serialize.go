@@ -71,44 +71,20 @@ func (a Asset) Pack() []byte {
 	return bytesRet
 }
 
-//type Memo struct {
-//	From    PubKey      `json:"from"`
-//	To      PubKey      `json:"to"`
-//	Nonce   uint64      `json:"nonce"`
-//	Message MemoMessage `json:"message"`
-//}
-
-//func (m Memo) Pack() []byte {
-//	bytesRet := make([]byte, 0)
-//	bytesRet = append(bytesRet, m.From[:]...)
-//	bytesRet = append(bytesRet, m.To[:]...)
-//	bytesNonce := PackUint64(m.Nonce)
-//	bytesRet = append(bytesRet, bytesNonce...)
-//	// length
-//	bytesLength := PackVarInt(uint64(len(m.Message) + 4))
-//	bytesRet = append(bytesRet, bytesLength...)
-//	// checksum
-//	bytesRet = append(bytesRet, []byte{0, 0, 0, 0}...)
-//	bytesRet = append(bytesRet, []byte(m.Message)...)
-//
-//	return bytesRet
-//}
-
 type TransferOperation struct {
-	Fee         Asset   `json:"fee"`
-	GuaranteeId string  `json:"guarantee_id,omitempty"`
-	From        string  `json:"from"`
-	To          string  `json:"to"`
-	FromAddr    Address `json:"from_addr"`
-	ToAddr      Address `json:"to_addr"`
-	Amount      Asset   `json:"amount"`
-	//Memo        *Memo         `json:"memo,omitempty"`
-	Memo       *interface{}  `json:"memo,omitempty"`
-	Extensions []interface{} `json:"extensions"`
+	Fee         Asset         `json:"fee"`
+	GuaranteeId string        `json:"guarantee_id,omitempty"`
+	From        string        `json:"from"`
+	To          string        `json:"to"`
+	FromAddr    Address       `json:"from_addr"`
+	ToAddr      Address       `json:"to_addr"`
+	Amount      Asset         `json:"amount"`
+	Memo        *interface{}  `json:"memo,omitempty"`
+	Extensions  []interface{} `json:"extensions"`
 }
 
 func (to *TransferOperation) SetValue(fromAddr string, toAddr string,
-	amount uint64, fee uint64, memo string) error {
+	amount uint64, fee uint64) error {
 
 	to.Fee.SetDefault()
 	to.Fee.Amount = int64(fee)
@@ -135,11 +111,6 @@ func (to *TransferOperation) SetValue(fromAddr string, toAddr string,
 	toAddrBytes, _ := hex.DecodeString(toAddrHex)
 	to.ToAddr.SetBytes(toAddrBytes)
 
-	//if len(memo) > 0 {
-	//	to.Memo = &Memo{Message: MemoMessage(memo)}
-	//} else {
-	//	to.Memo = nil
-	//}
 	to.Memo = nil
 
 	return nil
@@ -147,14 +118,9 @@ func (to *TransferOperation) SetValue(fromAddr string, toAddr string,
 
 func (to *TransferOperation) Pack() []byte {
 	bytesRet := make([]byte, 0)
-	//bytesMemo := make([]byte, 0)
 
 	bytesFee := to.Fee.Pack()
 	bytesAmount := to.Amount.Pack()
-
-	//if to.Memo != nil {
-	//	bytesMemo = to.Memo.Pack()
-	//}
 
 	bytesRet = append(bytesRet, bytesFee...)
 	//guarantee_id
@@ -169,13 +135,6 @@ func (to *TransferOperation) Pack() []byte {
 	bytesRet = append(bytesRet, byte(UseAddressPrefix))
 	bytesRet = append(bytesRet, to.ToAddr[:]...)
 	bytesRet = append(bytesRet, bytesAmount...)
-
-	//if to.Memo != nil {
-	//	bytesRet = append(bytesRet, byte(1))
-	//	bytesRet = append(bytesRet, bytesMemo...)
-	//} else {
-	//	bytesRet = append(bytesRet, byte(0))
-	//}
 
 	// pack empty memo
 	bytesRet = append(bytesRet, byte(0))
