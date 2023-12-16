@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"fmt"
 	"math/big"
 	"reflect"
 	"strconv"
@@ -11,6 +12,7 @@ import (
 type AssetInfoRsp struct {
 	Id     int             `json:"id"`
 	Result AssetInfoResult `json:"result"`
+	Error  interface{}     `json:"error"`
 }
 
 type AssetInfoResult struct {
@@ -20,17 +22,20 @@ type AssetInfoResult struct {
 	Issuer     string `json:"issuer"`
 	CreateAddr string `json:"create_addr"`
 	Options    struct {
-		MaxSupply         string `json:"max_supply"`
-		MaxPerMint        int    `json:"max_per_mint"`
-		CreateTime        string `json:"create_time"`
-		BosToken          bool   `json:"bos_token"`
-		MintInterval      int    `json:"mint_interval"`
-		MaxMintCountLimit int    `json:"max_mint_count_limit"`
-		MarketFeePercent  int    `json:"market_fee_percent"`
-		MaxMarketFee      string `json:"max_market_fee"`
-		IssuerPermissions int    `json:"issuer_permissions"`
-		Flags             int    `json:"flags"`
+		MaxSupply         interface{} `json:"max_supply"`
+		MaxPerMint        interface{} `json:"max_per_mint"`
+		CreateTime        string      `json:"create_time"`
+		Brc20Token        bool        `json:"brc20_token"`
+		MintInterval      int         `json:"mint_interval"`
+		MaxMintCountLimit interface{} `json:"max_mint_count_limit"`
+		MarketFeePercent  int         `json:"market_fee_percent"`
+		MaxMarketFee      interface{} `json:"max_market_fee"`
+		IssuerPermissions int         `json:"issuer_permissions"`
+		Flags             int         `json:"flags"`
 	} `json:"options"`
+	DynamicData struct {
+		CurrentSupply interface{} `json:"current_supply"`
+	} `json:"dynamic_data"`
 }
 
 func GetAssetInfo(url string, assetName string) (rsp *AssetInfoRsp, err error) {
@@ -51,6 +56,14 @@ func GetAssetInfo(url string, assetName string) (rsp *AssetInfoRsp, err error) {
 	var response AssetInfoRsp
 
 	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return nil, err
+	}
+
+	if response.Error != nil {
+		errStr, _ := json.Marshal(response.Error)
+		return nil, fmt.Errorf(string(errStr))
+	}
 
 	return &response, nil
 }
@@ -58,6 +71,7 @@ func GetAssetInfo(url string, assetName string) (rsp *AssetInfoRsp, err error) {
 type AddressBalanceRsp struct {
 	Id     int                    `json:"id"`
 	Result []AddressBalanceResult `json:"result"`
+	Error  interface{}            `json:"error"`
 }
 
 type AddressBalanceResult struct {
@@ -83,6 +97,14 @@ func GetAddressBalance(url, address, assetId string) (*big.Int, error) {
 	var response AddressBalanceRsp
 
 	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return nil, err
+	}
+
+	if response.Error != nil {
+		errStr, _ := json.Marshal(response.Error)
+		return nil, fmt.Errorf(string(errStr))
+	}
 
 	for _, k := range response.Result {
 		if k.AssetId == assetId {
@@ -99,8 +121,9 @@ func GetAddressBalance(url, address, assetId string) (*big.Int, error) {
 }
 
 type InfoRsp struct {
-	Id     int        `json:"id"`
-	Result InfoResult `json:"result"`
+	Id     int         `json:"id"`
+	Result InfoResult  `json:"result"`
+	Error  interface{} `json:"error"`
 }
 
 type InfoResult struct {
@@ -125,13 +148,22 @@ func GetChainId(url string) (string, error) {
 	var response InfoRsp
 
 	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return "", err
+	}
+
+	if response.Error != nil {
+		errStr, _ := json.Marshal(response.Error)
+		return "", fmt.Errorf(string(errStr))
+	}
 
 	return response.Result.ChainId, err
 }
 
 type RefBlockInfoRsp struct {
-	Id     int    `json:"id"`
-	Result string `json:"result"`
+	Id     int         `json:"id"`
+	Result string      `json:"result"`
+	Error  interface{} `json:"error"`
 }
 
 func GetRefBlockInfo(url string) (uint16, uint32, error) {
@@ -152,6 +184,14 @@ func GetRefBlockInfo(url string) (uint16, uint32, error) {
 	var response RefBlockInfoRsp
 
 	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	if response.Error != nil {
+		errStr, _ := json.Marshal(response.Error)
+		return 0, 0, fmt.Errorf(string(errStr))
+	}
 
 	l := strings.Split(response.Result, ",")
 	refBlockNum, _ := strconv.ParseInt(l[0], 10, 64)
@@ -161,8 +201,9 @@ func GetRefBlockInfo(url string) (uint16, uint32, error) {
 }
 
 type BroadcastTxRsp struct {
-	Id     int    `json:"id"`
-	Result string `json:"result"`
+	Id     int         `json:"id"`
+	Result string      `json:"result"`
+	Error  interface{} `json:"error"`
 }
 
 func BroadcastTx(url string, signTx interface{}) (string, error) {
@@ -183,6 +224,14 @@ func BroadcastTx(url string, signTx interface{}) (string, error) {
 	var response BroadcastTxRsp
 
 	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return "", err
+	}
+
+	if response.Error != nil {
+		errStr, _ := json.Marshal(response.Error)
+		return "", fmt.Errorf(string(errStr))
+	}
 
 	return response.Result, err
 }

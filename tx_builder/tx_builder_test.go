@@ -53,7 +53,10 @@ func TestBuildTxMint(t *testing.T) {
 	if err != nil {
 		t.Fatal(err.Error())
 	}
-	issueAmount := resp.Result.Options.MaxPerMint
+	issueAmount, err := utils.Uint64Supply(resp.Result.Options.MaxPerMint)
+	if err != nil {
+		t.Fatal(err.Error())
+	}
 	fee := uint64(100000)
 
 	_, txBytes, tx, _ := BuildTxMint(refBlockNum, refBlockPrefix, issueAddr, issueAssetId, int64(issueAssetIdNum), int64(issueAmount), fee)

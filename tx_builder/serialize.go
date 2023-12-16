@@ -151,7 +151,7 @@ type MintOperation struct {
 	AssetToIssue   Asset         `json:"asset_to_issue"`
 	IssueToAccount string        `json:"issue_to_account"`
 	IssueAddress   Address       `json:"issue_address"`
-	BosToken       bool          `json:"bos_token"`
+	Brc20Token     bool          `json:"brc20_token"`
 	Memo           *interface{}  `json:"memo,omitempty"`
 	Extensions     []interface{} `json:"extensions"`
 }
@@ -170,7 +170,7 @@ func (to *MintOperation) SetValue(issueAddr string,
 
 	to.IssueToAccount = "1.2.0"
 
-	to.BosToken = true
+	to.Brc20Token = true
 
 	to.Extensions = make([]interface{}, 0)
 
@@ -203,7 +203,7 @@ func (to *MintOperation) Pack() []byte {
 	bytesRet = append(bytesRet, byte(UseAddressPrefix))
 	bytesRet = append(bytesRet, to.IssueAddress[:]...)
 
-	//bos_token
+	//brc20_token
 	bytesRet = append(bytesRet, byte(1))
 
 	// pack empty memo
@@ -223,6 +223,7 @@ type Transaction struct {
 	Expiration     UTCTime         `json:"expiration"`
 	Operations     []OperationPair `json:"operations"`
 	Extensions     []interface{}   `json:"extensions"`
+	NoncePow       uint64          `json:"nonce"`
 	Signatures     []Signature     `json:"signatures"`
 }
 
@@ -246,6 +247,10 @@ func (tx *Transaction) Pack() []byte {
 
 	//extension
 	bytesRet = append(bytesRet, byte(0))
+
+	//pack nonce 0
+	bytesNoncePow := PackUint64(0)
+	bytesRet = append(bytesRet, bytesNoncePow...)
 
 	//without sig
 	return bytesRet

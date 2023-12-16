@@ -11,7 +11,7 @@ var (
 )
 
 func TestGetAssetInfo(t *testing.T) {
-	resp, err := GetAssetInfo(walletUrl, "BTC")
+	resp, err := GetAssetInfo(walletUrl, "FF")
 	if err != nil {
 		t.Fatal(err.Error())
 	}

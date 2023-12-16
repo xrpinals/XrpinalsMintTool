@@ -73,7 +73,10 @@ func TestSignTx2(t *testing.T) {
 	if err != nil {
 		t.Fatal(err.Error())
 	}
-	issueAmount := resp.Result.Options.MaxPerMint
+	issueAmount, err := utils.Uint64Supply(resp.Result.Options.MaxPerMint)
+	if err != nil {
+		t.Fatal(err.Error())
+	}
 	fee := uint64(100000)
 
 	_, _, tx, err := BuildTxMint(refBlockNum, refBlockPrefix, issueAddr, issueAssetId, int64(issueAssetIdNum), int64(issueAmount), fee)
@@ -163,7 +166,10 @@ func TestBroadcastTx2(t *testing.T) {
 	if err != nil {
 		t.Fatal(err.Error())
 	}
-	issueAmount := resp.Result.Options.MaxPerMint
+	issueAmount, err := utils.Uint64Supply(resp.Result.Options.MaxPerMint)
+	if err != nil {
+		t.Fatal(err.Error())
+	}
 	fee := uint64(100000)
 
 	txHashCalc, _, tx, err := BuildTxMint(refBlockNum, refBlockPrefix, issueAddr, issueAssetId, int64(issueAssetIdNum), int64(issueAmount), fee)
@@ -178,6 +184,9 @@ func TestBroadcastTx2(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	fmt.Println("SignTx2 Sig:", hex.EncodeToString(txSig))
+
+	// assume that after pow, the calculated nonce is 0x1111
+	txSigned.NoncePow = 0x1111
 
 	txJson, err := json.Marshal(*txSigned)
 	if err != nil {
