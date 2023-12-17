@@ -1,6 +1,7 @@
 package bitcoin
 
 import (
+	"fmt"
 	"math"
 	"math/big"
 	"strconv"
@@ -13,6 +14,9 @@ const (
 func NBits2Target(nBits uint32) *big.Int {
 	nBits = nBits & 0xffffffff
 	nSize := nBits >> 24
+
+	fmt.Println(nSize)
+
 	nWord := big.NewInt(int64(nBits & 0x007fffff))
 	if nSize <= 3 {
 		nWord = new(big.Int).Mul(nWord, new(big.Int).Exp(big.NewInt(2), big.NewInt(int64(8*(3-nSize))), nil))

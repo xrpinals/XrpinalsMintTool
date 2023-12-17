@@ -13,8 +13,6 @@ var (
 
 type Config struct {
 	WalletRpcUrl string     `json:"walletRpcUrl"`
-	AssetName    string     `json:"assetName"`
-	PrivateKey   string     `json:"privateKey"`
 	Logs         LogsConfig `json:"logs"`
 }
 

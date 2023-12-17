@@ -24,6 +24,11 @@ var (
 	Difficult uint32
 )
 
+var (
+	PrivateKey    = ""
+	MintAssetName = ""
+)
+
 type Miner struct{}
 
 func init() {
@@ -38,42 +43,47 @@ func init() {
 }
 
 func StartMining() {
-	var wg sync.WaitGroup
-
-	resp, err := utils.GetAssetInfo(config.WalletRpcUrl, config.AssetName)
+	resp, err := utils.GetAssetInfo(config.WalletRpcUrl, MintAssetName)
 	if err != nil {
 		panic(err)
 	}
+	isStop.Store(false)
+	if !resp.Result.Options.Brc20Token {
+		panic(fmt.Errorf("not brc20 token, can not mint"))
+	}
+
 	Difficult = resp.Result.DynamicData.CurrentNBits
 
+	var wg sync.WaitGroup
 	for i := 0; i < MinerNum; i++ {
 		wg.Add(1)
 		miner := Miner{}
 		go miner.mining(&wg, uint64(i))
 	}
 	wg.Wait()
+
 }
 
-func (m *Miner) buildTx() (string, *tx_builder.Transaction, error) {
+func (m *Miner) buildMintTx() (string, *tx_builder.Transaction, error) {
 	// build mint tx
-	txHash, tx, err := m.getMintTxHash()
+	txHash, tx, err := m.getMintTx()
 	if err != nil {
-		Logger.Errorf("buildTx: getMintTxHash err: %v", err)
+		Logger.Errorf("buildMintTx: getMintTx err: %v", err)
 		return "", nil, err
 	}
 	return txHash, tx, nil
 }
 
-func (m *Miner) signTx(tx *tx_builder.Transaction) (*tx_builder.Transaction, error) {
+func (m *Miner) signMintTx(tx *tx_builder.Transaction) (*tx_builder.Transaction, error) {
 	chainId, err := utils.GetChainId(config.WalletRpcUrl)
 	if err != nil {
-		Logger.Errorf("buildTx: GetChainId err: %v", err)
+		Logger.Errorf("signMintTx: GetChainId err: %v", err)
 		return nil, err
 	}
 
-	_, txSigned, err := tx_builder.SignTx(chainId, tx, config.PrivateKey)
+	_, txSigned, err := tx_builder.SignTx(chainId, tx, PrivateKey)
 	if err != nil {
-		Logger.Errorf("signTx: SignTx err: %v", err)
+		Logger.Errorf("signMintTx: SignTx err: %v", err)
 		return nil, err
 	}
 
@@ -83,9 +93,9 @@ func (m *Miner) signTx(tx *tx_builder.Transaction) (*tx_builder.Transaction, err
 func (m *Miner) mining(wg *sync.WaitGroup, nonce uint64) {
 	defer wg.Done()
 
-	txHash, unSignedTx, err := m.buildTx()
+	txHash, unSignedTx, err := m.buildMintTx()
 	if err != nil {
-		Logger.Errorf("mining: buildTx err: %v", err)
+		Logger.Errorf("mining: buildMintTx err: %v", err)
 		return
 	}
 
@@ -113,7 +123,7 @@ func (m *Miner) mining(wg *sync.WaitGroup, nonce uint64) {
 			return
 		}
 		hashBytes := s256.Sum(nil)
-		utils.ReverseBytesInPlace(hashBytes)
+		//utils.ReverseBytesInPlace(hashBytes)
 		result := new(big.Int).SetBytes(hashBytes)
 
 		if result.Cmp(target) < 0 {
@@ -124,6 +134,10 @@ func (m *Miner) mining(wg *sync.WaitGroup, nonce uint64) {
 			} else {
 				return
 			}
+		} else {
+			if isStop.Load() {
+				return
+			}
 		}
 
 		// next nonce
@@ -132,33 +146,39 @@ func (m *Miner) mining(wg *sync.WaitGroup, nonce uint64) {
 
 	// broadcast tx
 	unSignedTx.NoncePow = nonce
-	signedTx, err := m.signTx(unSignedTx)
+	signedTx, err := m.signMintTx(unSignedTx)
 	if err != nil {
-		Logger.Errorf("mining: signTx err: %v", err)
+		Logger.Errorf("mining: signMintTx err: %v", err)
 		return
 	}
 
 	_, err = utils.BroadcastTx(config.WalletRpcUrl, signedTx)
 	if err != nil {
+		fmt.Printf("mining failed: err: %v", err)
 		Logger.Errorf("mining: utils.BroadcastTx err: %v", err)
 		return
 	}
 
-	Logger.Infof("Mining success, txHash:%v", txHash)
+	fmt.Printf("mining success, txHash:%v", txHash)
+	Logger.Infof("mining success, txHash:%v", txHash)
 }
 
-func (m *Miner) getMintTxHash() (string, *tx_builder.Transaction, error) {
+func (m *Miner) getMintTx() (string, *tx_builder.Transaction, error) {
 	refBlockNum, refBlockPrefix, err := utils.GetRefBlockInfo(config.WalletRpcUrl)
 	if err != nil {
 		return "", nil, err
 	}
 
-	resp, err := utils.GetAssetInfo(config.WalletRpcUrl, config.AssetName)
+	resp, err := utils.GetAssetInfo(config.WalletRpcUrl, MintAssetName)
 	if err != nil {
 		return "", nil, err
 	}
 
-	issueAddr, err := tx_builder.WifKeyToAddr(config.PrivateKey)
+	if !resp.Result.Options.Brc20Token {
+		return "", nil, fmt.Errorf("not brc20 token, can not mint")
+	}
+
+	issueAddr, err := tx_builder.WifKeyToAddr(PrivateKey)
 	if err != nil {
 		return "", nil, err
 	}
