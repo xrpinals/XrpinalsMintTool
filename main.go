@@ -110,5 +110,12 @@ func main() {
 		}
 
 		fmt.Println("balance: ", balance.String())
+	} else if os.Args[1] == "get_deposit_address" {
+		result, err := utils.GetDepositAddress(conf.GetConfig().WalletRpcUrl, "BTC")
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Println("BTC deposit address: ", result.BindAccountHot)
 	}
 }

@@ -61,3 +61,21 @@ func TestGetRefBlockInfo(t *testing.T) {
 	fmt.Println(refBlockNum)
 	fmt.Println(refBlockPrefix)
 }
+
+func TestGetBindingAccount(t *testing.T) {
+	result, err := GetBindingAccount(walletUrl, "mnUbdaJcTiBUARHGMZpQ5dVkrcj1XUMame", "BTC")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+
+	fmt.Println(result)
+}
+
+func TestGetDepositAddress(t *testing.T) {
+	result, err := GetDepositAddress(walletUrl, "BTC")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+
+	fmt.Println(*result)
+}

@@ -236,3 +236,93 @@ func BroadcastTx(url string, signTx interface{}) (string, error) {
 
 	return response.Result, err
 }
+
+type BindingAccountResult struct {
+	Id          string `json:"id"`
+	Owner       string `json:"owner"`
+	ChainType   string `json:"chain_type"`
+	BindAccount string `json:"bind_account"`
+}
+
+type BindingAccountRsp struct {
+	Id     int                    `json:"id"`
+	Result []BindingAccountResult `json:"result"`
+	Error  interface{}            `json:"error"`
+}
+
+func GetBindingAccount(url string, addr string, asset string) ([]BindingAccountResult, error) {
+	assetInfoReq := RpcReq{
+		Id:     1,
+		Method: "get_binding_account",
+		Params: []interface{}{addr, asset},
+	}
+
+	body, err := HttpClient{
+		Timeout: 30,
+	}.HttpPost(url, assetInfoReq)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var response BindingAccountRsp
+
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return nil, err
+	}
+
+	if response.Error != nil {
+		errStr, _ := json.Marshal(response.Error)
+		return nil, fmt.Errorf(string(errStr))
+	}
+
+	return response.Result, nil
+}
+
+type DepositAddressResult struct {
+	Id                string `json:"id"`
+	ChainType         string `json:"chain_type"`
+	BindAccountHot    string `json:"bind_account_hot"`
+	RedeemScriptHot   string `json:"redeemScript_hot"`
+	BindAccountCold   string `json:"bind_account_cold"`
+	RedeemScriptCold  string `json:"redeemScript_cold"`
+	EffectiveBlockNum int    `json:"effective_block_num"`
+	EndBlock          int64  `json:"end_block"`
+}
+
+type DepositAddressRsp struct {
+	Id     int                  `json:"id"`
+	Result DepositAddressResult `json:"result"`
+	Error  interface{}          `json:"error"`
+}
+
+func GetDepositAddress(url string, asset string) (*DepositAddressResult, error) {
+	assetInfoReq := RpcReq{
+		Id:     1,
+		Method: "get_current_multi_address",
+		Params: []interface{}{asset},
+	}
+
+	body, err := HttpClient{
+		Timeout: 30,
+	}.HttpPost(url, assetInfoReq)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var response DepositAddressRsp
+
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return nil, err
+	}
+
+	if response.Error != nil {
+		errStr, _ := json.Marshal(response.Error)
+		return nil, fmt.Errorf(string(errStr))
+	}
+
+	return &response.Result, nil
+}
