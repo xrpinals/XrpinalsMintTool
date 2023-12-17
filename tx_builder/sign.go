@@ -4,6 +4,7 @@ import (
 	//"fmt"
 	"crypto/sha256"
 	"encoding/hex"
+	"fmt"
 	secp256k1 "github.com/bitnexty/secp256k1-go"
 )
 
@@ -14,6 +15,8 @@ func SignTx(chainIdHex string, tx *Transaction, keyWif string) ([]byte, *Transac
 	}
 
 	txData := tx.Pack()
+
+	fmt.Println(hex.EncodeToString(txData))
 
 	//fmt.Println("unsigned tx:", hex.EncodeToString(txData))
 	//fmt.Println("chain id:", chainIdHex)

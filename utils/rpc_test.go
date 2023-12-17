@@ -7,11 +7,11 @@ import (
 )
 
 var (
-	walletUrl = "http://192.168.1.73:8093"
+	walletUrl = "http://192.168.1.165:50321"
 )
 
 func TestGetAssetInfo(t *testing.T) {
-	resp, err := GetAssetInfo(walletUrl, "FF")
+	resp, err := GetAssetInfo(walletUrl, "TT")
 	if err != nil {
 		t.Fatal(err.Error())
 	}

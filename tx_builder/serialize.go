@@ -249,7 +249,7 @@ func (tx *Transaction) Pack() []byte {
 	bytesRet = append(bytesRet, byte(0))
 
 	//pack nonce 0
-	bytesNoncePow := PackUint64(0)
+	bytesNoncePow := PackUint64(tx.NoncePow)
 	bytesRet = append(bytesRet, bytesNoncePow...)
 
 	//without sig

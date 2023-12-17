@@ -2,11 +2,8 @@ package main
 
 import (
 	"github.com/Xrpinals-Protocol/XrpinalsMintTool/logger"
+	"github.com/Xrpinals-Protocol/XrpinalsMintTool/mining"
 )
-
-func main() {
-	appInit()
-}
 
 func appInit() {
 	// init log
@@ -14,4 +11,9 @@ func appInit() {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func main() {
+	appInit()
+	mining.StartMining()
 }

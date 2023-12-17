@@ -35,6 +35,7 @@ type AssetInfoResult struct {
 	} `json:"options"`
 	DynamicData struct {
 		CurrentSupply interface{} `json:"current_supply"`
+		CurrentNBits  uint32      `json:"current_nBits"`
 	} `json:"dynamic_data"`
 }
 

@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	walletUrl = "http://192.168.1.73:8093"
+	walletUrl = "http://192.168.1.165:50321"
 )
 
 func TestBuildTxTransfer(t *testing.T) {
@@ -49,7 +49,7 @@ func TestBuildTxMint(t *testing.T) {
 	issueAddr := "mfhGJnP5T7A5kYDJNxnHozxrVzC7WKHzKs"
 	issueAssetId := resp.Result.Id
 	l := strings.Split(resp.Result.Id, ".")
-	issueAssetIdNum, err := strconv.Atoi(l[len(l)-2])
+	issueAssetIdNum, err := strconv.Atoi(l[len(l)-1])
 	if err != nil {
 		t.Fatal(err.Error())
 	}

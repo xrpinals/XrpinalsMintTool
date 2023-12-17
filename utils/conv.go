@@ -23,3 +23,10 @@ func Uint64Supply(supply interface{}) (uint64, error) {
 	}
 	return 0, fmt.Errorf("not support type")
 }
+func ReverseBytesInPlace(input []byte) {
+	length := len(input)
+
+	for i := 0; i < length/2; i++ {
+		input[i], input[length-1-i] = input[length-1-i], input[i]
+	}
+}

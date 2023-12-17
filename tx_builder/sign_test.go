@@ -69,7 +69,7 @@ func TestSignTx2(t *testing.T) {
 	issueAddr := "mfhGJnP5T7A5kYDJNxnHozxrVzC7WKHzKs"
 	issueAssetId := resp.Result.Id
 	l := strings.Split(resp.Result.Id, ".")
-	issueAssetIdNum, err := strconv.Atoi(l[len(l)-2])
+	issueAssetIdNum, err := strconv.Atoi(l[len(l)-1])
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -83,6 +83,9 @@ func TestSignTx2(t *testing.T) {
 	if err != nil {
 		t.Fatal(err.Error())
 	}
+
+	// assume that after pow, the calculated nonce is 0x1111
+	tx.NoncePow = 0x1111
 
 	keyWif := "5JF7asAXBFzGbnLDdLyKqrkRGGKcSJByU22fvzejdU6TdLGimdf"
 	txSig, txSigned, err := SignTx(chainId, tx, keyWif)
@@ -154,7 +157,7 @@ func TestBroadcastTx2(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 
-	resp, err := utils.GetAssetInfo(walletUrl, "FF")
+	resp, err := utils.GetAssetInfo(walletUrl, "TT")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -162,7 +165,7 @@ func TestBroadcastTx2(t *testing.T) {
 	issueAddr := "mfhGJnP5T7A5kYDJNxnHozxrVzC7WKHzKs"
 	issueAssetId := resp.Result.Id
 	l := strings.Split(resp.Result.Id, ".")
-	issueAssetIdNum, err := strconv.Atoi(l[len(l)-2])
+	issueAssetIdNum, err := strconv.Atoi(l[len(l)-1])
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -178,15 +181,15 @@ func TestBroadcastTx2(t *testing.T) {
 	}
 	fmt.Println("BuildTxMint txHash:", txHashCalc)
 
+	// assume that after pow, the calculated nonce is 0x1111
+	tx.NoncePow = 0x0
+
 	keyWif := "5JF7asAXBFzGbnLDdLyKqrkRGGKcSJByU22fvzejdU6TdLGimdf"
 	txSig, txSigned, err := SignTx(chainId, tx, keyWif)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
 	fmt.Println("SignTx2 Sig:", hex.EncodeToString(txSig))
-
-	// assume that after pow, the calculated nonce is 0x1111
-	txSigned.NoncePow = 0x1111
 
 	txJson, err := json.Marshal(*txSigned)
 	if err != nil {
