@@ -14,6 +14,7 @@ var (
 type Config struct {
 	WalletRpcUrl string     `json:"walletRpcUrl"`
 	Logs         LogsConfig `json:"logs"`
+	Data         DataConfig `json:"data"`
 }
 
 type LogsConfig struct {
@@ -21,6 +22,10 @@ type LogsConfig struct {
 	Level       string `json:"level"`
 	MaxSize     int64  `json:"maxSize"`
 	BackupCount int64  `json:"backupCount"`
+}
+
+type DataConfig struct {
+	DataPath string `json:"dataPath"`
 }
 
 func GetConfig() *Config {

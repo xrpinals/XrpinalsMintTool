@@ -20,7 +20,6 @@ import (
 var (
 	MinerNum  = 1
 	isStop    atomic.Bool
-	config    *conf.Config
 	Difficult uint32
 )
 
@@ -33,21 +32,18 @@ type Miner struct{}
 
 func init() {
 	numCPU := runtime.NumCPU()
-	fmt.Println("Number of CPUs: ", numCPU)
 	runtime.GOMAXPROCS(numCPU)
 	if numCPU > 1 {
 		MinerNum = numCPU - 1
 	}
-	isStop.Store(false)
-	config = conf.GetConfig()
 }
 
 func StartMining() {
-	resp, err := utils.GetAssetInfo(config.WalletRpcUrl, MintAssetName)
+	isStop.Store(false)
+	resp, err := utils.GetAssetInfo(conf.GetConfig().WalletRpcUrl, MintAssetName)
 	if err != nil {
 		panic(err)
 	}
-	isStop.Store(false)
 	if !resp.Result.Options.Brc20Token {
 		panic(fmt.Errorf("not brc20 token, can not mint"))
 	}
@@ -75,7 +71,7 @@ func (m *Miner) buildMintTx() (string, *tx_builder.Transaction, error) {
 }
 
 func (m *Miner) signMintTx(tx *tx_builder.Transaction) (*tx_builder.Transaction, error) {
-	chainId, err := utils.GetChainId(config.WalletRpcUrl)
+	chainId, err := utils.GetChainId(conf.GetConfig().WalletRpcUrl)
 	if err != nil {
 		Logger.Errorf("signMintTx: GetChainId err: %v", err)
 		return nil, err
@@ -123,13 +119,10 @@ func (m *Miner) mining(wg *sync.WaitGroup, nonce uint64) {
 			return
 		}
 		hashBytes := s256.Sum(nil)
-		//utils.ReverseBytesInPlace(hashBytes)
 		result := new(big.Int).SetBytes(hashBytes)
 
 		if result.Cmp(target) < 0 {
 			if isStop.CompareAndSwap(false, true) {
-				fmt.Println("payload: ", hex.EncodeToString(payloadBytes))
-				fmt.Println("hash: ", hex.EncodeToString(hashBytes))
 				break
 			} else {
 				return
@@ -152,7 +145,7 @@ func (m *Miner) mining(wg *sync.WaitGroup, nonce uint64) {
 		return
 	}
 
-	_, err = utils.BroadcastTx(config.WalletRpcUrl, signedTx)
+	_, err = utils.BroadcastTx(conf.GetConfig().WalletRpcUrl, signedTx)
 	if err != nil {
 		fmt.Printf("mining failed: err: %v", err)
 		Logger.Errorf("mining: utils.BroadcastTx err: %v", err)
@@ -164,12 +157,12 @@ func (m *Miner) mining(wg *sync.WaitGroup, nonce uint64) {
 }
 
 func (m *Miner) getMintTx() (string, *tx_builder.Transaction, error) {
-	refBlockNum, refBlockPrefix, err := utils.GetRefBlockInfo(config.WalletRpcUrl)
+	refBlockNum, refBlockPrefix, err := utils.GetRefBlockInfo(conf.GetConfig().WalletRpcUrl)
 	if err != nil {
 		return "", nil, err
 	}
 
-	resp, err := utils.GetAssetInfo(config.WalletRpcUrl, MintAssetName)
+	resp, err := utils.GetAssetInfo(conf.GetConfig().WalletRpcUrl, MintAssetName)
 	if err != nil {
 		return "", nil, err
 	}

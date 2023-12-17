@@ -9,11 +9,11 @@ import (
 )
 
 func TestNBits2Target(t *testing.T) {
-	targetGenesis := NBits2Target(0x1f00ffff)
-	//fmt.Println("base 10, targetGenesis:", targetGenesis.Text(10))
-	//assert.Equal(t, "26959535291011309493156476344723991336010898738574164086137773096960", targetGenesis.Text(10))
+	targetGenesis := NBits2Target(GenesisNBits)
+	fmt.Println("base 10, targetGenesis:", targetGenesis.Text(10))
+	assert.Equal(t, "26959535291011309493156476344723991336010898738574164086137773096960", targetGenesis.Text(10))
 	fmt.Printf("base 16, targetGenesis: %064s", targetGenesis.Text(16))
-	//assert.Equal(t, "00000000ffff0000000000000000000000000000000000000000000000000000", targetGenesis.Text(10))
+	assert.Equal(t, "00000000ffff0000000000000000000000000000000000000000000000000000", targetGenesis.Text(10))
 }
 
 func TestGetTargetWork(t *testing.T) {
