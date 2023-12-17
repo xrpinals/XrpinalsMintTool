@@ -12,7 +12,7 @@ func TestNBits2Target(t *testing.T) {
 	targetGenesis := NBits2Target(GenesisNBits)
 	fmt.Println("base 10, targetGenesis:", targetGenesis.Text(10))
 	assert.Equal(t, "26959535291011309493156476344723991336010898738574164086137773096960", targetGenesis.Text(10))
-	fmt.Printf("base 16, targetGenesis: %064s", targetGenesis.Text(16))
+	fmt.Printf("base 16, targetGenesis: %064s\n", targetGenesis.Text(16))
 	assert.Equal(t, "00000000ffff0000000000000000000000000000000000000000000000000000", targetGenesis.Text(10))
 }
 
@@ -57,7 +57,7 @@ func TestGetDiffWork(t *testing.T) {
 }
 
 func TestGetHashRateByWork(t *testing.T) {
-	fmt.Printf("hashrate: %f MHash/s", GetHashRateByWork(math.Pow(2.0, 32.0), 600, "m"))
+	fmt.Printf("hashrate: %f MHash/s\n", GetHashRateByWork(math.Pow(2.0, 32.0), 600, "m"))
 }
 
 func TestGetHashRateByDiff(t *testing.T) {
@@ -65,7 +65,7 @@ func TestGetHashRateByDiff(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	fmt.Printf("hashrate: %f EHash/s", hashRate)
+	fmt.Printf("hashrate: %f EHash/s\n", hashRate)
 }
 
 func TestGetHashRateByNBits(t *testing.T) {
@@ -73,5 +73,5 @@ func TestGetHashRateByNBits(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	fmt.Printf("hashrate: %f EHash/s", hashRate)
+	fmt.Printf("hashrate: %f EHash/s\n", hashRate)
 }

@@ -147,12 +147,12 @@ func (m *Miner) mining(wg *sync.WaitGroup, nonce uint64) {
 
 	_, err = utils.BroadcastTx(conf.GetConfig().WalletRpcUrl, signedTx)
 	if err != nil {
-		fmt.Printf("mining failed: err: %v", err)
+		fmt.Printf("mining failed: err: %v\n", err)
 		Logger.Errorf("mining: utils.BroadcastTx err: %v", err)
 		return
 	}
 
-	fmt.Printf("mining success, txHash:%v", txHash)
+	fmt.Printf("mining success, txHash:%v\n", txHash)
 	Logger.Infof("mining success, txHash:%v", txHash)
 }
 
