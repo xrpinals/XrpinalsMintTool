@@ -12,8 +12,9 @@ const (
 )
 
 const (
-	TxOpTypeTransfer = 0
-	TxOpTypeMint     = 17
+	TxOpTypeTransfer    = 0
+	TxOpTypeAccountBind = 10
+	TxOpTypeMint        = 17
 )
 
 func BuildTxTransfer(refBlockNum uint16, refBlockPrefix uint32,
@@ -65,6 +66,36 @@ func BuildTxMint(refBlockNum uint16, refBlockPrefix uint32,
 	}
 	var opPair OperationPair
 	opPair[0] = byte(TxOpTypeMint)
+	opPair[1] = &op
+	tx.Operations = append(tx.Operations, opPair)
+
+	txPacked := tx.Pack()
+
+	s256 := sha256.New()
+	_, err = s256.Write(txPacked)
+	txHash := s256.Sum(nil)
+
+	return hex.EncodeToString(txHash[0:20]), txPacked, &tx, nil
+}
+
+func BuildTxAccountBind(refBlockNum uint16, refBlockPrefix uint32,
+	keyWif string, fee uint64) (string, []byte, *Transaction, error) {
+
+	var tx Transaction
+	tx.RefBlockNum = refBlockNum
+	tx.RefBlockPrefix = refBlockPrefix
+
+	tx.Expiration = UTCTime(time.Now().Unix() + ExpireSeconds)
+	tx.Extensions = make([]interface{}, 0)
+	tx.Signatures = make([]Signature, 0)
+
+	var op AccountBindOperation
+	err := op.SetValue(keyWif, fee)
+	if err != nil {
+		return "", nil, nil, err
+	}
+	var opPair OperationPair
+	opPair[0] = byte(TxOpTypeAccountBind)
 	opPair[1] = &op
 	tx.Operations = append(tx.Operations, opPair)
 

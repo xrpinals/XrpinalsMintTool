@@ -64,3 +64,21 @@ func TestBuildTxMint(t *testing.T) {
 	txJson, _ := json.Marshal(*tx)
 	fmt.Println("BuildTxMint Tx:", string(txJson))
 }
+
+func TestBuildTxAccountBind(t *testing.T) {
+	refBlockNum, refBlockPrefix, err := utils.GetRefBlockInfo(walletUrl)
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	fmt.Println(refBlockNum)
+	fmt.Println(refBlockPrefix)
+
+	fee := uint64(100000)
+
+	keyWif := "5JF7asAXBFzGbnLDdLyKqrkRGGKcSJByU22fvzejdU6TdLGimdf"
+
+	_, txBytes, tx, _ := BuildTxAccountBind(refBlockNum, refBlockPrefix, keyWif, fee)
+	fmt.Println("BuildTxAccountBind Hex:", hex.EncodeToString(txBytes))
+	txJson, _ := json.Marshal(*tx)
+	fmt.Println("BuildTxAccountBind Tx:", string(txJson))
+}

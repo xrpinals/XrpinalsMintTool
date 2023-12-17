@@ -1,9 +1,12 @@
 package tx_builder
 
 import (
+	"crypto/sha256"
+	"encoding/base64"
 	"encoding/binary"
 	"encoding/hex"
 	"github.com/Xrpinals-Protocol/XrpinalsMintTool/property"
+	"github.com/bitnexty/secp256k1-go"
 )
 
 func PackUint8(v uint8) []byte {
@@ -13,6 +16,22 @@ func PackUint8(v uint8) []byte {
 func PackUint16(v uint16) []byte {
 	res := make([]byte, 2)
 	binary.LittleEndian.PutUint16(res, v)
+	return res
+}
+
+func PackString(v string) []byte {
+	res := make([]byte, 0)
+	res = append(res, PackVarInt(uint64(len(v)))...)
+	res = append(res, []byte(v)...)
+
+	return res
+}
+
+func PackBytes(v []byte) []byte {
+	res := make([]byte, 0)
+	res = append(res, PackVarInt(uint64(len(v)))...)
+	res = append(res, v...)
+
 	return res
 }
 
@@ -211,6 +230,127 @@ func (to *MintOperation) Pack() []byte {
 
 	// Extensions
 	bytesRet = append(bytesRet, PackVarInt(uint64(len(to.Extensions)))...)
+
+	return bytesRet
+}
+
+type AccountBindOperation struct {
+	Fee              Asset     `json:"fee"`
+	CrosschainType   string    `json:"crosschain_type"`
+	Addr             Address   `json:"addr"`
+	AccountSignature Signature `json:"account_signature"`
+	TunnelAddress    string    `json:"tunnel_address"`
+	TunnelSignature  string    `json:"tunnel_signature"`
+	GuaranteeId      string    `json:"guarantee_id,omitempty"`
+}
+
+func (to *AccountBindOperation) SetValue(keyWif string, fee uint64) error {
+	to.Fee.SetDefault()
+	to.Fee.Amount = int64(fee)
+
+	to.CrosschainType = "BTC"
+
+	keyHex, err := WifKeyToHexKey(keyWif)
+	if err != nil {
+		return err
+	}
+
+	keyBytes, err := hex.DecodeString(keyHex)
+	if err != nil {
+		return err
+	}
+
+	tunnelAddr, err := WifKeyToAddr(keyWif)
+	if err != nil {
+		return err
+	}
+
+	to.TunnelAddress = tunnelAddr
+	addrHex, err := AddrToHexAddr(tunnelAddr)
+	if err != nil {
+		return err
+	}
+
+	addrBytes, err := hex.DecodeString(addrHex)
+	if err != nil {
+		return err
+	}
+
+	to.Addr.SetBytes(addrBytes)
+
+	var tunnelBytes []byte
+	tunnelBytes = append(tunnelBytes, []byte("Bitcoin Signed Message:\n")...)
+	tunnelBytes = append(tunnelBytes, PackString(tunnelAddr)...)
+
+	// sign tunnel address
+	s256 := sha256.New()
+	_, _ = s256.Write(tunnelBytes)
+	digestData := s256.Sum(nil)
+
+	var tunnelSig []byte
+	for {
+		tunnelSig, err = secp256k1.BtsSign(digestData, keyBytes, true)
+		if err != nil {
+			return err
+		}
+
+		if tunnelSig[1] < 128 && tunnelSig[33] < 128 {
+			break
+		}
+	}
+
+	to.TunnelSignature = base64.StdEncoding.EncodeToString(tunnelSig)
+
+	var accountBytes []byte
+	accountBytes = append(accountBytes, byte(UseAddressPrefix))
+	accountBytes = append(accountBytes, addrBytes...)
+
+	s256Account := sha256.New()
+	_, _ = s256.Write(accountBytes)
+	digestAccountData := s256Account.Sum(nil)
+
+	// sign account address
+	var accountSig []byte
+	for {
+		accountSig, err = secp256k1.BtsSign(digestAccountData, keyBytes, true)
+		if err != nil {
+			return err
+		}
+
+		if accountSig[1] < 128 && accountSig[33] < 128 {
+			break
+		}
+	}
+
+	to.AccountSignature = accountSig
+
+	return nil
+}
+
+func (to *AccountBindOperation) Pack() []byte {
+	bytesRet := make([]byte, 0)
+
+	bytesFee := to.Fee.Pack()
+	bytesRet = append(bytesRet, bytesFee...)
+
+	// crosschain_type
+	bytesRet = append(bytesRet, PackString(to.CrosschainType)...)
+
+	// addr
+	bytesRet = append(bytesRet, byte(UseAddressPrefix))
+	bytesRet = append(bytesRet, to.Addr[:]...)
+
+	// account signature
+	bytesRet = append(bytesRet, to.AccountSignature...)
+
+	// tunnel address
+	bytesRet = append(bytesRet, PackString(to.TunnelAddress)...)
+
+	// tunnel signature
+	bytesRet = append(bytesRet, PackString(to.TunnelSignature)...)
+
+	//guarantee_id
+	bytesRet = append(bytesRet, byte(0))
 
 	return bytesRet
 }
