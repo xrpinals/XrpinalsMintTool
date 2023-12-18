@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"strconv"
+	"time"
 )
 
 func Uint64Supply(supply interface{}) (uint64, error) {
@@ -29,4 +30,15 @@ func ReverseBytesInPlace(input []byte) {
 	for i := 0; i < length/2; i++ {
 		input[i], input[length-1-i] = input[length-1-i], input[i]
 	}
+}
+
+func DataTimeToTimestamp(dataTime string) (int64, error) {
+	parsedTime, err := time.Parse("2006-01-02T15:04:05", dataTime)
+	if err != nil {
+		return 0, err
+	}
+
+	timestamp := parsedTime.Unix()
+
+	return timestamp, nil
 }

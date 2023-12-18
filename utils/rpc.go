@@ -26,7 +26,7 @@ type AssetInfoResult struct {
 		MaxPerMint        interface{} `json:"max_per_mint"`
 		CreateTime        string      `json:"create_time"`
 		Brc20Token        bool        `json:"brc20_token"`
-		MintInterval      int         `json:"mint_interval"`
+		MintInterval      int64       `json:"mint_interval"`
 		MaxMintCountLimit interface{} `json:"max_mint_count_limit"`
 		MarketFeePercent  int         `json:"market_fee_percent"`
 		MaxMarketFee      interface{} `json:"max_market_fee"`
@@ -334,9 +334,9 @@ type AddressMintInfoRsp struct {
 }
 
 type AddressMintInfoResult struct {
-	Amount    int64  `json:"amount"`
+	Amount    uint64 `json:"amount"`
 	Time      string `json:"time"`
-	MintCount int64  `json:"mint_count"`
+	MintCount uint64 `json:"mint_count"`
 }
 
 func GetAddressMintInfo(url string, addr, assetName string) (rsp *AddressMintInfoRsp, err error) {

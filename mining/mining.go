@@ -3,6 +3,7 @@ package mining
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"github.com/Xrpinals-Protocol/XrpinalsMintTool/bitcoin"
 	"github.com/Xrpinals-Protocol/XrpinalsMintTool/conf"
@@ -15,6 +16,7 @@ import (
 	"strings"
 	"sync"
 	"sync/atomic"
+	"time"
 )
 
 var (
@@ -38,6 +40,52 @@ func init() {
 	}
 }
 
+func preCheck(assetInfo *utils.AssetInfoRsp) error {
+	addr, err := tx_builder.WifKeyToAddr(PrivateKey)
+	if err != nil {
+		return err
+	}
+
+	maxMintCountLimit, err := utils.Uint64Supply(assetInfo.Result.Options.MaxMintCountLimit)
+	if err != nil {
+		return err
+	}
+
+	maxSupply, err := utils.Uint64Supply(assetInfo.Result.Options.MaxSupply)
+	if err != nil {
+		return err
+	}
+
+	currentSupply, err := utils.Uint64Supply(assetInfo.Result.DynamicData.CurrentSupply)
+	if err != nil {
+		return err
+	}
+
+	mintInfo, err := utils.GetAddressMintInfo(conf.GetConfig().WalletRpcUrl, addr, MintAssetName)
+	if err != nil {
+		return err
+	}
+
+	lastMintTime, err := utils.DataTimeToTimestamp(mintInfo.Result.Time)
+	if err != nil {
+		return err
+	}
+
+	if time.Now().Unix()-lastMintTime < assetInfo.Result.Options.MintInterval {
+		return errors.New("the time elapsed since the address last successful mint is less than the mint interval limit")
+	}
+
+	if mintInfo.Result.MintCount >= maxMintCountLimit {
+		return errors.New("address had mint max count")
+	}
+
+	if mintInfo.Result.Amount+currentSupply > maxSupply {
+		return errors.New("after this mint, will beyond max mint amount")
+	}
+
+	return nil
+}
+
 func StartMining() {
 	isStop.Store(false)
 	resp, err := utils.GetAssetInfo(conf.GetConfig().WalletRpcUrl, MintAssetName)
@@ -46,6 +94,11 @@ func StartMining() {
 	}
 	if !resp.Result.Options.Brc20Token {
 		panic(fmt.Errorf("not brc20 token, can not mint"))
+	}
+
+	err = preCheck(resp)
+	if err != nil {
+		panic(err)
 	}
 
 	Difficult = resp.Result.DynamicData.CurrentNBits
