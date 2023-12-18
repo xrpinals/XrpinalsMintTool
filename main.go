@@ -157,5 +157,23 @@ func main() {
 		}
 
 		fmt.Printf("transfer success,txHash:%v", txHash)
+	} else if os.Args[1] == "get_mint_info" {
+		fs := flag.NewFlagSet("get_mint_info", flag.ExitOnError)
+
+		var addr string
+		var asset string
+		fs.StringVar(&addr, "addr", "", "your address")
+		fs.StringVar(&asset, "asset", "", "asset name you want to query")
+		err := fs.Parse(os.Args[2:])
+		if err != nil {
+			panic(err)
+		}
+
+		mintInfo, err := utils.GetAddressMintInfo(conf.GetConfig().WalletRpcUrl, addr, asset)
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Printf("mint info: \n mint amount: %v\n mint count: %v", mintInfo.Result.MintCount, mintInfo.Result.Amount)
 	}
 }

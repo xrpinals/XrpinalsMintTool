@@ -326,3 +326,45 @@ func GetDepositAddress(url string, asset string) (*DepositAddressResult, error) 
 
 	return &response.Result, nil
 }
+
+type AddressMintInfoRsp struct {
+	Id     int                   `json:"id"`
+	Result AddressMintInfoResult `json:"result"`
+	Error  interface{}           `json:"error"`
+}
+
+type AddressMintInfoResult struct {
+	Amount    int64  `json:"amount"`
+	Time      string `json:"time"`
+	MintCount int64  `json:"mint_count"`
+}
+
+func GetAddressMintInfo(url string, addr, assetName string) (rsp *AddressMintInfoRsp, err error) {
+	addressMintInfoReq := RpcReq{
+		Id:     1,
+		Method: "get_address_mint_info",
+		Params: []interface{}{addr, assetName},
+	}
+
+	body, err := HttpClient{
+		Timeout: 30,
+	}.HttpPost(url, addressMintInfoReq)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var response AddressMintInfoRsp
+
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return nil, err
+	}
+
+	if response.Error != nil {
+		errStr, _ := json.Marshal(response.Error)
+		return nil, fmt.Errorf(string(errStr))
+	}
+
+	return &response, nil
+}

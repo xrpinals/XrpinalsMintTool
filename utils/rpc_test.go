@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	walletUrl = "http://192.168.1.165:50301"
+	walletUrl = "http://192.168.1.165:50321"
 )
 
 func TestGetAssetInfo(t *testing.T) {
@@ -73,6 +73,15 @@ func TestGetBindingAccount(t *testing.T) {
 
 func TestGetDepositAddress(t *testing.T) {
 	result, err := GetDepositAddress(walletUrl, "BTC")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+
+	fmt.Println(*result)
+}
+
+func TestGetAddressMintInfo(t *testing.T) {
+	result, err := GetAddressMintInfo(walletUrl, "mnUbdaJcTiBUARHGMZpQ5dVkrcj1XUMame", "OO")
 	if err != nil {
 		t.Fatal(err.Error())
 	}

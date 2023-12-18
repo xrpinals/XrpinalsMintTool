@@ -109,3 +109,25 @@ Usage of mint:
 transfer success,txHash:6eb8918df731f29952cc00a4ae77c0a07e907742
 
 ```
+
+
+* Query Mint Brc20 Info
+
+```
+./XrpinalsMintTool get_mint_info -h
+
+Usage of get_mint_info:
+  -addr string
+        your address
+  -asset string
+        asset name you want to query
+
+
+./XrpinalsMintTool get_mint_info -addr mnUbdaJcTiBUARHGMZpQ5dVkrcj1XUMame -asset XX
+
+mint info:
+ mint amount: 0
+ mint count: 0
+
+
+```
