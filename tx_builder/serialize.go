@@ -102,7 +102,7 @@ type TransferOperation struct {
 	Extensions  []interface{} `json:"extensions"`
 }
 
-func (to *TransferOperation) SetValue(fromAddr string, toAddr string,
+func (to *TransferOperation) SetValue(fromAddr string, toAddr string, assetName string,
 	amount uint64, fee uint64) error {
 
 	to.Fee.SetDefault()
@@ -110,6 +110,10 @@ func (to *TransferOperation) SetValue(fromAddr string, toAddr string,
 
 	to.Amount.SetDefault()
 	to.Amount.Amount = int64(amount)
+
+	if len(assetName) > 0 {
+		to.Amount.AssetId = assetName
+	}
 
 	to.From = "1.2.0"
 	to.To = "1.2.0"

@@ -29,7 +29,7 @@ func TestSignTx1(t *testing.T) {
 	amount := uint64(100000)
 	fee := uint64(100000)
 
-	_, _, tx, err := BuildTxTransfer(refBlockNum, refBlockPrefix, fromAddr, toAddr, amount, fee)
+	_, _, tx, err := BuildTxTransfer(refBlockNum, refBlockPrefix, fromAddr, toAddr, "", amount, fee)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -118,7 +118,7 @@ func TestBroadcastTx1(t *testing.T) {
 	amount := uint64(100000)
 	fee := uint64(100000)
 
-	txHashCalc, _, tx, err := BuildTxTransfer(refBlockNum, refBlockPrefix, fromAddr, toAddr, amount, fee)
+	txHashCalc, _, tx, err := BuildTxTransfer(refBlockNum, refBlockPrefix, fromAddr, toAddr, "", amount, fee)
 	if err != nil {
 		t.Fatal(err.Error())
 	}

@@ -85,3 +85,27 @@ Usage of mint:
 mining success, txHash:03d8216ce49753cbe6ae7a1a65e08b4fe841d5b6
 
 ```
+
+
+* Transfer Brc20 Asset
+
+```
+./XrpinalsMintTool mint -h
+
+Usage of mint:
+  Usage of transfer:
+  -from string
+        your address
+  -to string
+        receiver address
+  -amount string
+        asset amount you want to transfer
+  -asset string
+        asset name you want to transfer
+
+
+./XrpinalsMintTool transfer -from mfhGJnP5T7A5kYDJNxnHozxrVzC7WKHzKs -to n2frLX2z972TxP7vvqGEMUyi4CFxmmTnk8 -asset 1.3.0 -amount 2
+
+transfer success,txHash:6eb8918df731f29952cc00a4ae77c0a07e907742
+
+```

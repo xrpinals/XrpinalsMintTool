@@ -7,6 +7,7 @@ import (
 	"github.com/Xrpinals-Protocol/XrpinalsMintTool/key"
 	"github.com/Xrpinals-Protocol/XrpinalsMintTool/logger"
 	"github.com/Xrpinals-Protocol/XrpinalsMintTool/mining"
+	"github.com/Xrpinals-Protocol/XrpinalsMintTool/tx_builder"
 	"github.com/Xrpinals-Protocol/XrpinalsMintTool/utils"
 	"os"
 )
@@ -54,6 +55,7 @@ func main() {
 	} else if os.Args[1] == "import_key" {
 		fs := flag.NewFlagSet("import_key", flag.ExitOnError)
 
+		fmt.Println(os.Args[1])
 		var pKey string
 		fs.StringVar(&pKey, "key", "", "your private key")
 		err := fs.Parse(os.Args[2:])
@@ -61,6 +63,7 @@ func main() {
 			panic(err)
 		}
 
+		fmt.Println(pKey)
 		addr, err := key.ImportPrivateKey(pKey)
 		if err != nil {
 			panic(err)
@@ -117,5 +120,42 @@ func main() {
 		}
 
 		fmt.Println("BTC deposit address: ", result.BindAccountHot)
+	} else if os.Args[1] == "transfer" {
+		fs := flag.NewFlagSet("transfer", flag.ExitOnError)
+
+		var from string
+		var to string
+		var asset string
+		var amount string
+		var keyWif string
+		fs.StringVar(&from, "from", "", "your address")
+		fs.StringVar(&to, "to", "", "receiver address")
+		fs.StringVar(&asset, "asset", "", "asset name you want to transfer")
+		fs.StringVar(&amount, "amount", "", "asset amount you want to transfer")
+		err := fs.Parse(os.Args[2:])
+		if err != nil {
+			panic(err)
+		}
+
+		ok, err := key.IsAddressExisted(from)
+		if err != nil {
+			panic(err)
+		}
+
+		if ok {
+			keyWif, err = key.GetAddressKey(from)
+			if err != nil {
+				panic(err)
+			}
+		} else {
+			panic(fmt.Errorf("address %s is not in the storage", from))
+		}
+
+		txHash, err := tx_builder.Transfer(from, to, asset, amount, keyWif)
+		if err != nil {
+			panic(fmt.Errorf("transfer error:%v", err))
+		}
+
+		fmt.Printf("transfer success,txHash:%v", txHash)
 	}
 }

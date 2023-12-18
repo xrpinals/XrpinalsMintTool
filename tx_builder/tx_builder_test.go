@@ -27,7 +27,7 @@ func TestBuildTxTransfer(t *testing.T) {
 	amount := uint64(100000)
 	fee := uint64(100000)
 
-	_, txBytes, tx, _ := BuildTxTransfer(refBlockNum, refBlockPrefix, fromAddr, toAddr, amount, fee)
+	_, txBytes, tx, _ := BuildTxTransfer(refBlockNum, refBlockPrefix, fromAddr, toAddr, "", amount, fee)
 	fmt.Println("BuildTxTransfer Hex:", hex.EncodeToString(txBytes))
 	txJson, _ := json.Marshal(*tx)
 	fmt.Println("BuildTxTransfer Tx:", string(txJson))
