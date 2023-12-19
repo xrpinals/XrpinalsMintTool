@@ -9,6 +9,7 @@ import (
 	"github.com/Xrpinals-Protocol/XrpinalsMintTool/mining"
 	"github.com/Xrpinals-Protocol/XrpinalsMintTool/tx_builder"
 	"github.com/Xrpinals-Protocol/XrpinalsMintTool/utils"
+	"github.com/shopspring/decimal"
 	"math"
 	"os"
 )
@@ -115,9 +116,11 @@ func main() {
 			panic(err)
 		}
 
-		balanceFloat, _ := balance.Float64()
-		balanceFloat = balanceFloat / math.Pow(10, float64(resp.Result.Precision))
-		fmt.Println("balance: ", balanceFloat)
+		balanceDecimal := decimal.NewFromBigInt(balance, 0)
+		precisionDecimal := decimal.NewFromFloat(math.Pow(10, float64(resp.Result.Precision)))
+		balanceDecimal = balanceDecimal.Div(precisionDecimal)
+
+		fmt.Println("balance: ", balanceDecimal.String())
 
 	} else if os.Args[1] == "get_deposit_address" {
 		result, err := utils.GetDepositAddress(conf.GetConfig().WalletRpcUrl, "BTC")
@@ -162,7 +165,15 @@ func main() {
 			panic(err)
 		}
 
-		txHash, err := tx_builder.Transfer(from, to, resp.Result.Id, amount, keyWif)
+		amountDecimal, err := decimal.NewFromString(amount)
+		if err != nil {
+			panic(err)
+		}
+
+		precisionDecimal := decimal.NewFromFloat(math.Pow(10, float64(resp.Result.Precision)))
+		amountDecimal = amountDecimal.Mul(precisionDecimal)
+
+		txHash, err := tx_builder.Transfer(from, to, resp.Result.Id, amountDecimal.StringFixed(0), keyWif)
 		if err != nil {
 			panic(fmt.Errorf("transfer error:%v", err))
 		}
