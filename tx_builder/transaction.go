@@ -22,7 +22,7 @@ func Transfer(from, to, asset, amount, keyWif string) (txHash string, err error)
 		return "", err
 	}
 
-	fee := uint64(100000)
+	fee := uint64(100)
 
 	_, _, tx, err := BuildTxTransfer(refBlockNum, refBlockPrefix, from, to, asset, amountUint, fee)
 	if err != nil {

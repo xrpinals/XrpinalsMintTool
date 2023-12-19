@@ -24,8 +24,8 @@ func TestBuildTxTransfer(t *testing.T) {
 
 	fromAddr := "mfhGJnP5T7A5kYDJNxnHozxrVzC7WKHzKs"
 	toAddr := "mfhGJnP5T7A5kYDJNxnHozxrVzC7WKHzKs"
-	amount := uint64(100000)
-	fee := uint64(100000)
+	amount := uint64(100000000)
+	fee := uint64(100)
 
 	_, txBytes, tx, _ := BuildTxTransfer(refBlockNum, refBlockPrefix, fromAddr, toAddr, "", amount, fee)
 	fmt.Println("BuildTxTransfer Hex:", hex.EncodeToString(txBytes))
@@ -57,7 +57,7 @@ func TestBuildTxMint(t *testing.T) {
 	if err != nil {
 		t.Fatal(err.Error())
 	}
-	fee := uint64(100000)
+	fee := uint64(100)
 
 	_, txBytes, tx, _ := BuildTxMint(refBlockNum, refBlockPrefix, issueAddr, issueAssetId, int64(issueAssetIdNum), int64(issueAmount), fee)
 	fmt.Println("BuildTxMint Hex:", hex.EncodeToString(txBytes))
@@ -73,7 +73,7 @@ func TestBuildTxAccountBind(t *testing.T) {
 	fmt.Println(refBlockNum)
 	fmt.Println(refBlockPrefix)
 
-	fee := uint64(100000)
+	fee := uint64(100)
 
 	keyWif := "5JF7asAXBFzGbnLDdLyKqrkRGGKcSJByU22fvzejdU6TdLGimdf"
 

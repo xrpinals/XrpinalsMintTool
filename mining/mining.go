@@ -241,7 +241,7 @@ func (m *Miner) getMintTx() (string, *tx_builder.Transaction, error) {
 	if err != nil {
 		return "", nil, err
 	}
-	fee := uint64(100000)
+	fee := uint64(100)
 
 	txHashCalc, _, tx, err := tx_builder.BuildTxMint(refBlockNum, refBlockPrefix, issueAddr, issueAssetId, int64(issueAssetIdNum), int64(issueAmount), fee)
 	if err != nil {

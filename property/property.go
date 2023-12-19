@@ -7,7 +7,7 @@ import (
 const (
 	BaseAssetId        = "1.3.0"
 	BaseAssetIdNum     = 0
-	BaseAssetPrecision = 100000
+	BaseAssetPrecision = 100000000
 )
 
 func RFC3339ToUTC(timeFormatStr string) (uint64, error) {

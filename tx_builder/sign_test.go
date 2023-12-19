@@ -26,8 +26,8 @@ func TestSignTx1(t *testing.T) {
 
 	fromAddr := "mfhGJnP5T7A5kYDJNxnHozxrVzC7WKHzKs"
 	toAddr := "mfhGJnP5T7A5kYDJNxnHozxrVzC7WKHzKs"
-	amount := uint64(100000)
-	fee := uint64(100000)
+	amount := uint64(100000000)
+	fee := uint64(100)
 
 	_, _, tx, err := BuildTxTransfer(refBlockNum, refBlockPrefix, fromAddr, toAddr, "", amount, fee)
 	if err != nil {
@@ -77,7 +77,7 @@ func TestSignTx2(t *testing.T) {
 	if err != nil {
 		t.Fatal(err.Error())
 	}
-	fee := uint64(100000)
+	fee := uint64(100)
 
 	_, _, tx, err := BuildTxMint(refBlockNum, refBlockPrefix, issueAddr, issueAssetId, int64(issueAssetIdNum), int64(issueAmount), fee)
 	if err != nil {
@@ -115,8 +115,8 @@ func TestBroadcastTx1(t *testing.T) {
 
 	fromAddr := "mfhGJnP5T7A5kYDJNxnHozxrVzC7WKHzKs"
 	toAddr := "mfhGJnP5T7A5kYDJNxnHozxrVzC7WKHzKs"
-	amount := uint64(100000)
-	fee := uint64(100000)
+	amount := uint64(100000000)
+	fee := uint64(100)
 
 	txHashCalc, _, tx, err := BuildTxTransfer(refBlockNum, refBlockPrefix, fromAddr, toAddr, "", amount, fee)
 	if err != nil {
@@ -173,7 +173,7 @@ func TestBroadcastTx2(t *testing.T) {
 	if err != nil {
 		t.Fatal(err.Error())
 	}
-	fee := uint64(100000)
+	fee := uint64(100)
 
 	txHashCalc, _, tx, err := BuildTxMint(refBlockNum, refBlockPrefix, issueAddr, issueAssetId, int64(issueAssetIdNum), int64(issueAmount), fee)
 	if err != nil {
@@ -219,7 +219,7 @@ func TestBroadcastTx3(t *testing.T) {
 
 	keyWif := "5JF7asAXBFzGbnLDdLyKqrkRGGKcSJByU22fvzejdU6TdLGimdf"
 
-	fee := uint64(100000)
+	fee := uint64(100)
 
 	txHashCalc, _, tx, err := BuildTxAccountBind(refBlockNum, refBlockPrefix, keyWif, fee)
 	if err != nil {
