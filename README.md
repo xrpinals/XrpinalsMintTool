@@ -61,11 +61,16 @@ balance:  0
 * Get Cross Chain Deposit Address
 
 ```
+./XrpinalsMintTool get_deposit_address -h 
 
-./XrpinalsMintTool get_deposit_address 
+Usage of get_deposit_address:
+  -addr string
+        your address
+
+
+./XrpinalsMintTool get_deposit_address -addr mumtmaYKH3ttGpVaAJRCiiWZsn5zAB9hU
 
 BTC deposit address:  2MvSkSdKtHC253TnDmmBj8uwWjcyeQ5sQkK
-
 
 ```
 

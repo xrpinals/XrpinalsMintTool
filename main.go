@@ -123,6 +123,25 @@ func main() {
 		fmt.Println("balance: ", balanceDecimal.String())
 
 	} else if os.Args[1] == "get_deposit_address" {
+		fs := flag.NewFlagSet("get_deposit_address", flag.ExitOnError)
+
+		var addr string
+		fs.StringVar(&addr, "addr", "", "your address")
+		err := fs.Parse(os.Args[2:])
+		if err != nil {
+			panic(err)
+		}
+
+		ok, err := key.IsAddressExisted(addr)
+		if err != nil {
+			panic(err)
+		}
+
+		if !ok {
+			fmt.Printf("address %s is not in the storage, you must call import_key first\n", addr)
+			return
+		}
+
 		result, err := utils.GetDepositAddress(conf.GetConfig().WalletRpcUrl, "BTC")
 		if err != nil {
 			panic(err)
