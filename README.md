@@ -1,6 +1,8 @@
 # XrpinalsMintTool
 
 
+![](https://github.com/Xrpinals-Protocol/XrpinalsMintTool/blob/main/assets/xrpinals.jpg)
+
 ### How To Use
 
 * Import Private Key
