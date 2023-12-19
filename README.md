@@ -1,7 +1,7 @@
 # XrpinalsMintTool
 
 
-### How to use
+### How To Use
 
 * Import Private Key
 
@@ -28,7 +28,7 @@ private key of address mnUbdaJcTiBUARHGMZpQ5dVkrcj1XUMame imported
 
 Usage of check_address:
   -addr string
-        your address
+        address you want to check
 
 
 ./XrpinalsMintTool check_address -addr mnUbdaJcTiBUARHGMZpQ5dVkrcj1XUMame
@@ -90,12 +90,12 @@ mining success, txHash:03d8216ce49753cbe6ae7a1a65e08b4fe841d5b6
 * Transfer Brc20 Asset
 
 ```
-./XrpinalsMintTool mint -h
+./XrpinalsMintTool transfer -h
 
 Usage of mint:
   Usage of transfer:
   -from string
-        your address
+        sender address (must be imported before)
   -to string
         receiver address
   -amount string
@@ -104,12 +104,11 @@ Usage of mint:
         asset name you want to transfer
 
 
-./XrpinalsMintTool transfer -from mfhGJnP5T7A5kYDJNxnHozxrVzC7WKHzKs -to n2frLX2z972TxP7vvqGEMUyi4CFxmmTnk8 -asset 1.3.0 -amount 2
+./XrpinalsMintTool transfer -from mfhGJnP5T7A5kYDJNxnHozxrVzC7WKHzKs -to mnUbdaJcTiBUARHGMZpQ5dVkrcj1XUMame -asset BTC -amount 0.02
 
 transfer success,txHash:6eb8918df731f29952cc00a4ae77c0a07e907742
 
 ```
-
 
 * Query Mint Brc20 Info
 
@@ -126,8 +125,8 @@ Usage of get_mint_info:
 ./XrpinalsMintTool get_mint_info -addr mnUbdaJcTiBUARHGMZpQ5dVkrcj1XUMame -asset XX
 
 mint info:
- mint amount: 0
- mint count: 0
-
+mint amount: 0
+mint count: 0
+last mint time: "2023-12-18T15:30:00"
 
 ```

@@ -13,7 +13,9 @@ import (
 
 // Lengths of hashes and addresses in bytes.
 const (
-	PrefixLength = 1
+	PrefixLength     = 1
+	KeyCpsFlagLength = 1
+
 	// HashLength is the expected length of the hash
 	HashLength = 20
 	// AddressLength is the expected length of the address

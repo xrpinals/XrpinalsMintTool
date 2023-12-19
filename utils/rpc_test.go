@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	walletUrl = "http://192.168.1.165:50321"
+	walletUrl = "http://192.168.1.165:50301"
 )
 
 func TestGetAssetInfo(t *testing.T) {

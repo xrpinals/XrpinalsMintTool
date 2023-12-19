@@ -31,14 +31,19 @@ const (
 )
 
 func WifKeyToHexKey(wifKey string) (string, error) {
-	keyBytes, err := base58.Decode(wifKey)
+	privateKeyBytes, err := base58.Decode(wifKey)
 	if err != nil {
 		return "", err
 	}
-	if len(keyBytes) != 37 {
-		return "", fmt.Errorf("invalid wif key")
+
+	if len(privateKeyBytes) != PrivateKeyLength+PrefixLength+CheckSumLength && len(privateKeyBytes) != PrivateKeyLength+PrefixLength+KeyCpsFlagLength+CheckSumLength {
+		return "", fmt.Errorf("invalid wif key: length")
 	}
-	return hex.EncodeToString(keyBytes[1:33]), nil
+	if privateKeyBytes[0] != UseSecretPrefix {
+		return "", fmt.Errorf("invalid wif key: prefix")
+	}
+
+	return hex.EncodeToString(privateKeyBytes[PrefixLength : PrivateKeyLength+PrefixLength]), nil
 }
 
 func HexKeyToWifKey(hexKey string) (string, error) {
@@ -46,8 +51,8 @@ func HexKeyToWifKey(hexKey string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if len(hexKeyBytes) != 32 {
-		return "", fmt.Errorf("invalid hex key")
+	if len(hexKeyBytes) != PrivateKeyLength {
+		return "", fmt.Errorf("invalid hex key: length")
 	}
 	calcBytes := make([]byte, 0)
 	calcBytes = append(calcBytes, UseSecretPrefix)
@@ -68,7 +73,7 @@ func HexKeyToWifKey(hexKey string) (string, error) {
 	}
 	checkSum = s256.Sum(nil)
 
-	calcBytes = append(calcBytes, checkSum[0:4]...)
+	calcBytes = append(calcBytes, checkSum[0:CheckSumLength]...)
 
 	return base58.Encode(calcBytes), nil
 }
@@ -150,17 +155,17 @@ func PubKeyToAddr(pubKey string) (string, error) {
 
 func GetCompressPubKey(pubKeyBytes []byte) ([]byte, error) {
 	pubKeyBytes = pubKeyBytes[1:]
-	if len(pubKeyBytes) != 64 {
+	if len(pubKeyBytes) != 2*(PubKeyLength-1) {
 		return nil, fmt.Errorf("GetCompressPubKey: invalid pubKeyBytes size")
 	}
 
-	pubKeyCompressBytes := make([]byte, 33)
-	if pubKeyBytes[63]%2 == 0 {
+	pubKeyCompressBytes := make([]byte, PubKeyLength)
+	if pubKeyBytes[2*(PubKeyLength-1)-1]%2 == 0 {
 		pubKeyCompressBytes[0] = 0x2
 	} else {
 		pubKeyCompressBytes[0] = 0x3
 	}
-	copy(pubKeyCompressBytes[1:], pubKeyBytes[0:32])
+	copy(pubKeyCompressBytes[1:], pubKeyBytes[0:PubKeyLength-1])
 
 	return pubKeyCompressBytes, nil
 }
@@ -170,7 +175,7 @@ func WifKeyToAddr(wifKey string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if len(privateKeyBytes) != PrivateKeyLength+PrefixLength+CheckSumLength {
+	if len(privateKeyBytes) != PrivateKeyLength+PrefixLength+CheckSumLength && len(privateKeyBytes) != PrivateKeyLength+PrefixLength+KeyCpsFlagLength+CheckSumLength {
 		return "", fmt.Errorf("invalid wif key: length")
 	}
 	if privateKeyBytes[0] != UseSecretPrefix {

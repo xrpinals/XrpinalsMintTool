@@ -9,6 +9,7 @@ import (
 	"github.com/Xrpinals-Protocol/XrpinalsMintTool/mining"
 	"github.com/Xrpinals-Protocol/XrpinalsMintTool/tx_builder"
 	"github.com/Xrpinals-Protocol/XrpinalsMintTool/utils"
+	"math"
 	"os"
 )
 
@@ -70,6 +71,7 @@ func main() {
 		}
 
 		fmt.Printf("private key of address %s imported\n", addr)
+
 	} else if os.Args[1] == "check_address" {
 		fs := flag.NewFlagSet("check_address", flag.ExitOnError)
 
@@ -90,6 +92,7 @@ func main() {
 		} else {
 			panic(fmt.Errorf("address %s is not in the storage", addr))
 		}
+
 	} else if os.Args[1] == "get_balance" {
 		fs := flag.NewFlagSet("get_balance", flag.ExitOnError)
 
@@ -112,7 +115,10 @@ func main() {
 			panic(err)
 		}
 
-		fmt.Println("balance: ", balance.String())
+		balanceFloat, _ := balance.Float64()
+		balanceFloat = balanceFloat / math.Pow(10, float64(resp.Result.Precision))
+		fmt.Println("balance: ", balanceFloat)
+
 	} else if os.Args[1] == "get_deposit_address" {
 		result, err := utils.GetDepositAddress(conf.GetConfig().WalletRpcUrl, "BTC")
 		if err != nil {
@@ -151,12 +157,18 @@ func main() {
 			panic(fmt.Errorf("address %s is not in the storage", from))
 		}
 
-		txHash, err := tx_builder.Transfer(from, to, asset, amount, keyWif)
+		resp, err := utils.GetAssetInfo(conf.GetConfig().WalletRpcUrl, asset)
+		if err != nil {
+			panic(err)
+		}
+
+		txHash, err := tx_builder.Transfer(from, to, resp.Result.Id, amount, keyWif)
 		if err != nil {
 			panic(fmt.Errorf("transfer error:%v", err))
 		}
 
 		fmt.Printf("transfer success,txHash:%v", txHash)
+
 	} else if os.Args[1] == "get_mint_info" {
 		fs := flag.NewFlagSet("get_mint_info", flag.ExitOnError)
 
@@ -174,6 +186,8 @@ func main() {
 			panic(err)
 		}
 
-		fmt.Printf("mint info: \n mint amount: %v\n mint count: %v", mintInfo.Result.MintCount, mintInfo.Result.Amount)
+		fmt.Printf("mint info: \nmint amount: %v\nmint count: %v\n,last mint time: %v\n",
+			mintInfo.Result.MintCount, mintInfo.Result.Amount, mintInfo.Result.Time)
+
 	}
 }

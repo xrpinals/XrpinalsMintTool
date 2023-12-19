@@ -18,7 +18,7 @@ type AssetInfoRsp struct {
 type AssetInfoResult struct {
 	Id         string `json:"id"`
 	Symbol     string `json:"symbol"`
-	Precision  int    `json:"precision"`
+	Precision  int64  `json:"precision"`
 	Issuer     string `json:"issuer"`
 	CreateAddr string `json:"create_addr"`
 	Options    struct {
@@ -28,10 +28,10 @@ type AssetInfoResult struct {
 		Brc20Token        bool        `json:"brc20_token"`
 		MintInterval      int64       `json:"mint_interval"`
 		MaxMintCountLimit interface{} `json:"max_mint_count_limit"`
-		MarketFeePercent  int         `json:"market_fee_percent"`
+		MarketFeePercent  int64       `json:"market_fee_percent"`
 		MaxMarketFee      interface{} `json:"max_market_fee"`
-		IssuerPermissions int         `json:"issuer_permissions"`
-		Flags             int         `json:"flags"`
+		IssuerPermissions int64       `json:"issuer_permissions"`
+		Flags             int64       `json:"flags"`
 	} `json:"options"`
 	DynamicData struct {
 		CurrentSupply interface{} `json:"current_supply"`
