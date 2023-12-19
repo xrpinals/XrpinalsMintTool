@@ -7,6 +7,8 @@ import (
 	"encoding/hex"
 	"github.com/Xrpinals-Protocol/XrpinalsMintTool/property"
 	"github.com/bitnexty/secp256k1-go"
+	"strconv"
+	"strings"
 )
 
 func PackUint8(v uint8) []byte {
@@ -113,6 +115,13 @@ func (to *TransferOperation) SetValue(fromAddr string, toAddr string, assetName 
 
 	if len(assetName) > 0 {
 		to.Amount.AssetId = assetName
+
+		l := strings.Split(to.Amount.AssetId, ".")
+		idNum, err := strconv.Atoi(l[len(l)-1])
+		if err != nil {
+			return err
+		}
+		to.Amount.AssetIdNum = int64(idNum)
 	}
 
 	to.From = "1.2.0"

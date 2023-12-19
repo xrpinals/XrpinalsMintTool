@@ -15,8 +15,7 @@ import (
 )
 
 func appInit() {
-	// init log
-	err := logger.InitAppLog("mint-tool.log")
+	err := logger.InitAppLog("XrpinalsMintTool.log")
 	if err != nil {
 		panic(err)
 	}
@@ -49,7 +48,8 @@ func main() {
 				panic(err)
 			}
 		} else {
-			panic(fmt.Errorf("address %s is not in the storage", addr))
+			fmt.Printf("address %s is not in the storage", addr)
+			return
 		}
 
 		mining.StartMining()
@@ -65,7 +65,6 @@ func main() {
 			panic(err)
 		}
 
-		fmt.Println(pKey)
 		addr, err := key.ImportPrivateKey(pKey)
 		if err != nil {
 			panic(err)
@@ -91,7 +90,8 @@ func main() {
 		if ok {
 			fmt.Printf("address %s is in the storage\n", addr)
 		} else {
-			panic(fmt.Errorf("address %s is not in the storage", addr))
+			fmt.Printf("address %s is not in the storage\n", addr)
+			return
 		}
 
 	} else if os.Args[1] == "get_balance" {
@@ -137,6 +137,7 @@ func main() {
 		var asset string
 		var amount string
 		var keyWif string
+
 		fs.StringVar(&from, "from", "", "your address")
 		fs.StringVar(&to, "to", "", "receiver address")
 		fs.StringVar(&asset, "asset", "", "asset name you want to transfer")
@@ -157,7 +158,8 @@ func main() {
 				panic(err)
 			}
 		} else {
-			panic(fmt.Errorf("address %s is not in the storage", from))
+			fmt.Printf("address %s is not in the storage\n", from)
+			return
 		}
 
 		resp, err := utils.GetAssetInfo(conf.GetConfig().WalletRpcUrl, asset)
@@ -197,8 +199,17 @@ func main() {
 			panic(err)
 		}
 
-		fmt.Printf("mint info: \nmint amount: %v\nmint count: %v\n,last mint time: %v\n",
-			mintInfo.Result.MintCount, mintInfo.Result.Amount, mintInfo.Result.Time)
+		resp, err := utils.GetAssetInfo(conf.GetConfig().WalletRpcUrl, asset)
+		if err != nil {
+			panic(err)
+		}
+
+		amountDecimal := decimal.NewFromInt(int64(mintInfo.Result.Amount))
+		precisionDecimal := decimal.NewFromFloat(math.Pow(10, float64(resp.Result.Precision)))
+		amountDecimal = amountDecimal.Div(precisionDecimal)
+
+		fmt.Printf("mint info: \nmint amount: %v\nmint count: %v\nlast mint time: %v\n",
+			mintInfo.Result.MintCount, amountDecimal.String(), mintInfo.Result.Time)
 
 	}
 }

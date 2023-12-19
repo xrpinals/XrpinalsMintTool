@@ -72,7 +72,7 @@ func preCheck(assetInfo *utils.AssetInfoRsp) error {
 	}
 
 	if time.Now().Unix()-lastMintTime < assetInfo.Result.Options.MintInterval {
-		return errors.New("the time elapsed since the address last successful mint is less than the mint interval limit")
+		return errors.New("less than the mint interval")
 	}
 
 	if mintInfo.Result.MintCount >= maxMintCountLimit {
@@ -80,7 +80,7 @@ func preCheck(assetInfo *utils.AssetInfoRsp) error {
 	}
 
 	if mintInfo.Result.Amount+currentSupply > maxSupply {
-		return errors.New("after this mint, will beyond max mint amount")
+		return errors.New("beyond max mint amount")
 	}
 
 	return nil
@@ -93,12 +93,14 @@ func StartMining() {
 		panic(err)
 	}
 	if !resp.Result.Options.Brc20Token {
-		panic(fmt.Errorf("not brc20 token, can not mint"))
+		fmt.Println("not brc20 token, can not mint")
+		return
 	}
 
 	err = preCheck(resp)
 	if err != nil {
-		panic(err)
+		fmt.Println(err.Error())
+		return
 	}
 
 	Difficult = resp.Result.DynamicData.CurrentNBits
