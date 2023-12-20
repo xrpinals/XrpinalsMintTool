@@ -21,7 +21,7 @@ Usage of import_key:
 private key of address mnUbdaJcTiBUARHGMZpQ5dVkrcj1XUMame imported
  
 ```
-
+![](https://github.com/Xrpinals-Protocol/XrpinalsMintTool/blob/main/assets/import-key.png)
 
 * Check if the Address is in Storage
 
@@ -38,6 +38,7 @@ Usage of check_address:
 address mnUbdaJcTiBUARHGMZpQ5dVkrcj1XUMame is in the storage
 
 ```
+![](https://github.com/Xrpinals-Protocol/XrpinalsMintTool/blob/main/assets/check-address.png)
 
 * Get balance of Address
 
@@ -56,6 +57,7 @@ Usage of get_balance:
 balance:  0
 
 ```
+![](https://github.com/Xrpinals-Protocol/XrpinalsMintTool/blob/main/assets/get-balance.png)
 
 
 * Get Cross Chain Deposit Address
@@ -73,6 +75,7 @@ Usage of get_deposit_address:
 BTC deposit address:  2MvSkSdKtHC253TnDmmBj8uwWjcyeQ5sQkK
 
 ```
+![](https://github.com/Xrpinals-Protocol/XrpinalsMintTool/blob/main/assets/get-deposit-address.png)
 
 
 * Mint Brc20 Asset
@@ -89,9 +92,11 @@ Usage of mint:
 
 ./XrpinalsMintTool mint -addr mnUbdaJcTiBUARHGMZpQ5dVkrcj1XUMame -asset XX
 
-mining success, txHash:03d8216ce49753cbe6ae7a1a65e08b4fe841d5b6
+mining success, txHash: 03d8216ce49753cbe6ae7a1a65e08b4fe841d5b6
 
 ```
+![](https://github.com/Xrpinals-Protocol/XrpinalsMintTool/blob/main/assets/mint.png)
+
 
 
 * Transfer Brc20 Asset
@@ -113,9 +118,12 @@ Usage of mint:
 
 ./XrpinalsMintTool transfer -from mfhGJnP5T7A5kYDJNxnHozxrVzC7WKHzKs -to mnUbdaJcTiBUARHGMZpQ5dVkrcj1XUMame -asset BTC -amount 0.02
 
-transfer success,txHash:6eb8918df731f29952cc00a4ae77c0a07e907742
+transfer success, txHash: 6eb8918df731f29952cc00a4ae77c0a07e907742
 
 ```
+![](https://github.com/Xrpinals-Protocol/XrpinalsMintTool/blob/main/assets/transfer.png)
+
+
 
 * Query Mint Brc20 Info
 
@@ -137,3 +145,4 @@ mint count: 0
 last mint time: "2023-12-18T15:30:00"
 
 ```
+![](https://github.com/Xrpinals-Protocol/XrpinalsMintTool/blob/main/assets/get-mint-info.png)
