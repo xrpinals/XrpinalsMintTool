@@ -2,6 +2,8 @@ package conf
 
 import (
 	"encoding/json"
+	"fmt"
+	"github.com/Xrpinals-Protocol/XrpinalsMintTool/utils"
 	"io/ioutil"
 	"sync"
 )
@@ -32,12 +34,14 @@ func GetConfig() *Config {
 	configOnce.Do(func() {
 		bytes, err := ioutil.ReadFile("conf.json")
 		if err != nil {
-			panic(err)
+			fmt.Println(utils.BoldRed("[Error]: "), utils.FgWhiteBgRed(err.Error()))
+			return
 		}
 
 		err = json.Unmarshal(bytes, &config)
 		if err != nil {
-			panic(err)
+			fmt.Println(utils.BoldRed("[Error]: "), utils.FgWhiteBgRed(err.Error()))
+			return
 		}
 	})
 	return &config

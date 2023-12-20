@@ -8,7 +8,7 @@ import (
 
 const (
 	// ExpireSeconds tx expire seconds
-	ExpireSeconds = 86400
+	ExpireSeconds = 43200
 )
 
 const (

@@ -90,16 +90,17 @@ func StartMining() {
 	isStop.Store(false)
 	resp, err := utils.GetAssetInfo(conf.GetConfig().WalletRpcUrl, MintAssetName)
 	if err != nil {
-		panic(err)
+		fmt.Println(utils.BoldRed("[Error]: "), utils.FgWhiteBgRed(err.Error()))
+		return
 	}
 	if !resp.Result.Options.Brc20Token {
-		fmt.Println("not brc20 token, can not mint")
+		fmt.Println(utils.FgWhiteBgRed("not brc20 token, can not mint"))
 		return
 	}
 
 	err = preCheck(resp)
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println(utils.BoldRed("[Error]: "), utils.FgWhiteBgRed(err.Error()))
 		return
 	}
 
@@ -144,6 +145,12 @@ func (m *Miner) signMintTx(tx *tx_builder.Transaction) (*tx_builder.Transaction,
 func (m *Miner) mining(wg *sync.WaitGroup, nonce uint64) {
 	defer wg.Done()
 
+	statIdx := int64(0)
+	statHash := false
+	if nonce == 0 {
+		statHash = true
+	}
+
 	txHash, unSignedTx, err := m.buildMintTx()
 	if err != nil {
 		Logger.Errorf("mining: buildMintTx err: %v", err)
@@ -152,7 +159,23 @@ func (m *Miner) mining(wg *sync.WaitGroup, nonce uint64) {
 
 	target := bitcoin.NBits2Target(Difficult)
 
+	statStart := time.Now().UnixMicro()
+
 	for {
+		if statHash {
+			if statIdx > 10000000 {
+				hashRate := float64(statIdx) / float64(time.Now().UnixMicro()-statStart)
+				hashRateStr := fmt.Sprintf("%.03f", hashRate)
+				fmt.Println(utils.BoldYellow("[Mining]: "),
+					utils.Bold("Pow Hash Speed ------------------------- "),
+					utils.FgWhiteBgGreen(hashRateStr), utils.Bold("MHash/s"))
+
+				statIdx = 0
+				statStart = time.Now().UnixMicro()
+			}
+			statIdx = statIdx + int64(MinerNum)
+		}
+
 		payload := PowPayload{
 			Version:  1,
 			TxHash:   txHash,
@@ -207,7 +230,7 @@ func (m *Miner) mining(wg *sync.WaitGroup, nonce uint64) {
 		return
 	}
 
-	fmt.Printf("mining success, txHash:%v\n", txHash)
+	fmt.Println(utils.BoldYellow("[Info]: "), utils.Bold("mining success, txHash: "), utils.FgWhiteBgBlue(txHash))
 	Logger.Infof("mining success, txHash:%v", txHash)
 }
 
