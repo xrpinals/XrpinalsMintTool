@@ -3,7 +3,7 @@ package mining
 import (
 	"crypto/sha256"
 	"fmt"
-	"github.com/Xrpinals-Protocol/XrpinalsMintTool/bitcoin"
+	"github.com/xrpinals/XrpinalsMintTool/bitcoin"
 	"math/big"
 	"math/rand"
 	"runtime"

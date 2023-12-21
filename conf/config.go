@@ -3,7 +3,7 @@ package conf
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/Xrpinals-Protocol/XrpinalsMintTool/utils"
+	"github.com/xrpinals/XrpinalsMintTool/utils"
 	"io/ioutil"
 	"sync"
 )

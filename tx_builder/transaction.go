@@ -1,8 +1,8 @@
 package tx_builder
 
 import (
-	"github.com/Xrpinals-Protocol/XrpinalsMintTool/conf"
-	"github.com/Xrpinals-Protocol/XrpinalsMintTool/utils"
+	"github.com/xrpinals/XrpinalsMintTool/conf"
+	"github.com/xrpinals/XrpinalsMintTool/utils"
 	"strconv"
 )
 

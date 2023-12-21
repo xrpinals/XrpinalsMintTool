@@ -1,8 +1,8 @@
 package logger
 
 import (
-	"github.com/Xrpinals-Protocol/XrpinalsMintTool/conf"
 	"github.com/siddontang/go-log/log"
+	"github.com/xrpinals/XrpinalsMintTool/conf"
 	"os"
 	"strings"
 )

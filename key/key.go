@@ -2,10 +2,10 @@ package key
 
 import (
 	"fmt"
-	"github.com/Xrpinals-Protocol/XrpinalsMintTool/conf"
-	"github.com/Xrpinals-Protocol/XrpinalsMintTool/tx_builder"
-	"github.com/Xrpinals-Protocol/XrpinalsMintTool/utils"
 	"github.com/syndtr/goleveldb/leveldb"
+	"github.com/xrpinals/XrpinalsMintTool/conf"
+	"github.com/xrpinals/XrpinalsMintTool/tx_builder"
+	"github.com/xrpinals/XrpinalsMintTool/utils"
 )
 
 func ImportPrivateKey(key string) (string, error) {

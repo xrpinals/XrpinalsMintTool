@@ -4,7 +4,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/Xrpinals-Protocol/XrpinalsMintTool/utils"
+	"github.com/xrpinals/XrpinalsMintTool/utils"
 	"strconv"
 	"strings"
 	"testing"

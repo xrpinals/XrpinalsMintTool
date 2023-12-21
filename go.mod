@@ -1,4 +1,4 @@
-module github.com/Xrpinals-Protocol/XrpinalsMintTool
+module github.com/xrpinals/XrpinalsMintTool
 
 go 1.16
 

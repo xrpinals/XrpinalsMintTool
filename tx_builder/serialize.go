@@ -5,8 +5,8 @@ import (
 	"encoding/base64"
 	"encoding/binary"
 	"encoding/hex"
-	"github.com/Xrpinals-Protocol/XrpinalsMintTool/property"
 	"github.com/bitnexty/secp256k1-go"
+	"github.com/xrpinals/XrpinalsMintTool/property"
 	"strconv"
 	"strings"
 )
