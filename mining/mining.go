@@ -145,12 +145,15 @@ func (m *Miner) signMintTx(tx *tx_builder.Transaction) (*tx_builder.Transaction,
 func (m *Miner) mining(wg *sync.WaitGroup, nonce uint64) {
 	defer wg.Done()
 
-	statIdx := int64(0)
 	statHash := false
+	origNonce := nonce
 	if nonce == 0 {
 		statHash = true
 	}
 
+ReBuildTx:
+	nonce = origNonce
+	statIdx := int64(0)
 	txHash, unSignedTx, err := m.buildMintTx()
 	if err != nil {
 		Logger.Errorf("mining: buildMintTx err: %v", err)
@@ -158,8 +161,8 @@ func (m *Miner) mining(wg *sync.WaitGroup, nonce uint64) {
 	}
 
 	target := bitcoin.NBits2Target(Difficult)
-
 	statStart := time.Now().UnixMicro()
+	txBuildTime := time.Now().Unix()
 
 	for {
 		if statHash {
@@ -174,6 +177,12 @@ func (m *Miner) mining(wg *sync.WaitGroup, nonce uint64) {
 				statStart = time.Now().UnixMicro()
 			}
 			statIdx = statIdx + int64(MinerNum)
+		}
+
+		if (time.Now().Unix() - txBuildTime) > tx_builder.ExpireSeconds/2 {
+			fmt.Println(utils.BoldYellow("[Mining]: "),
+				utils.BoldGreen("Re-build mint transaction in case of expiring"))
+			goto ReBuildTx
 		}
 
 		payload := PowPayload{
