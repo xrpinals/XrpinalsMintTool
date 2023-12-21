@@ -23,8 +23,8 @@ const (
 )
 
 const (
-	//UseAddressPrefix = MainNetAddressPrefix
-	UseAddressPrefix = TestNetAddressPrefix
+	UseAddressPrefix = MainNetAddressPrefix
+	//UseAddressPrefix = TestNetAddressPrefix
 
 	UsePubKeyPrefix = MainNetPubKeyPrefix
 	UseSecretPrefix = MainNetSecretPrefix
