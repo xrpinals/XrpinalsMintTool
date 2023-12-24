@@ -35,7 +35,7 @@ func SignTx(chainIdHex string, tx *Transaction, keyWif string) ([]byte, *Transac
 			return nil, nil, err
 		}
 
-		if txSig[1] < 128 && txSig[33] < 128 {
+		if txSig[0] < 128 && txSig[32] < 128 {
 			break
 		}
 	}

@@ -307,7 +307,7 @@ func (to *AccountBindOperation) SetValue(keyWif string, fee uint64) error {
 			return err
 		}
 
-		if tunnelSig[1] < 128 && tunnelSig[33] < 128 {
+		if tunnelSig[0] < 128 && tunnelSig[32] < 128 {
 			break
 		}
 	}
@@ -330,7 +330,7 @@ func (to *AccountBindOperation) SetValue(keyWif string, fee uint64) error {
 			return err
 		}
 
-		if accountSig[1] < 128 && accountSig[33] < 128 {
+		if accountSig[0] < 128 && accountSig[32] < 128 {
 			break
 		}
 	}
