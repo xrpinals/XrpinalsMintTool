@@ -3,6 +3,25 @@
 
 ![](https://github.com/xrpinals/XrpinalsMintTool/blob/main/assets/xrpinals.jpg)
 
+
+### How To Build
+
+* Install Golang Compiler
+
+  [How To Install](https://go.dev/doc/install).
+  It is strongly recommended to install the **Latest** version.
+
+* Build XrpinalsMintTool
+  ```
+  git clone https://github.com/xrpinals/XrpinalsMintTool.git
+  cd XrpinalsMintTool
+  make XrpinalsMintTool_clean
+  make XrpinalsMintTool
+
+  cp conf_example.json conf.json   # and update this field "walletRpcUrl" to "http://api.xrpinals.com:1222"
+  ```
+  
+
 ### How To Use
 
 * Import Private Key
