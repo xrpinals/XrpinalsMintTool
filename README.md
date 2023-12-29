@@ -15,6 +15,10 @@
   ```
   git clone https://github.com/xrpinals/XrpinalsMintTool.git
   cd XrpinalsMintTool
+  cd utils/x17
+  cmake .
+  make
+  cd ../..
   make XrpinalsMintTool_clean
   make XrpinalsMintTool
 
@@ -165,3 +169,20 @@ last mint time: "2023-12-18T15:30:00"
 
 ```
 ![](https://github.com/xrpinals/XrpinalsMintTool/blob/main/assets/get-mint-info.png)
+
+### How To Use GPU
+
+
+Change server ip port in config
+
+Change gpu to true in config
+```
+e.g.
+"server":{
+    "IP": "0.0.0.0",
+    "Port": "42123"
+  },
+"gpu": true
+```
+
+Get GPU tool at https://github.com/xrpinals/XpsMiner
