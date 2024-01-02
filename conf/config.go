@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/xrpinals/XrpinalsMintTool/utils"
-	"io/ioutil"
+	"os"
 	"sync"
 )
 
@@ -38,7 +38,7 @@ type ServerConfig struct {
 
 func GetConfig() *Config {
 	configOnce.Do(func() {
-		bytes, err := ioutil.ReadFile("conf.json")
+		bytes, err := os.ReadFile("conf.json")
 		if err != nil {
 			fmt.Println(utils.BoldRed("[Error]: "), utils.FgWhiteBgRed(err.Error()))
 			return
