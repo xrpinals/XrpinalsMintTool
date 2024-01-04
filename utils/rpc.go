@@ -339,6 +339,31 @@ type AddressMintInfoResult struct {
 	MintCount uint64 `json:"mint_count"`
 }
 
+type WithdrawTransaction struct {
+	RefBlockNum    interface{}     `json:"ref_block_num"`
+	RefBlockPrefix interface{}     `json:"ref_block_prefix"`
+	Expiration     string          `json:"expiration"`
+	Operations     [][]interface{} `json:"operations"`
+	Extensions     []interface{}   `json:"extensions"`
+	Nonce          int             `json:"nonce"`
+	Signatures     []string        `json:"signatures"`
+}
+type WithdrawAllData struct {
+	Result [][]interface{} `json:"result"`
+}
+type WithdrawOp struct {
+	Fee struct {
+		Amount  int    `json:"amount"`
+		AssetId string `json:"asset_id"`
+	} `json:"fee"`
+	WithdrawAccount   string `json:"withdraw_account"`
+	Amount            string `json:"amount"`
+	AssetSymbol       string `json:"asset_symbol"`
+	AssetId           string `json:"asset_id"`
+	CrosschainAccount string `json:"crosschain_account"`
+	Memo              string `json:"memo"`
+}
+
 func GetAddressMintInfo(url string, addr, assetName string) (rsp *AddressMintInfoRsp, err error) {
 	addressMintInfoReq := RpcReq{
 		Id:     1,
@@ -367,4 +392,51 @@ func GetAddressMintInfo(url string, addr, assetName string) (rsp *AddressMintInf
 	}
 
 	return &response, nil
+}
+
+func GetWaitCrosschainInfo(url string, trxType int) (rsp *[]WithdrawOp, err error) {
+	CrosschainReq := RpcReq{
+		Id:     1,
+		Method: "get_crosschain_transaction",
+		Params: []interface{}{trxType},
+	}
+
+	body, err := HttpClient{
+		Timeout: 30,
+	}.HttpPost(url, CrosschainReq)
+
+	if err != nil {
+		return nil, err
+	}
+	var respAllData WithdrawAllData
+	resp := make([]WithdrawOp, 0)
+
+	err = json.Unmarshal(body, &respAllData)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, transactionData := range respAllData.Result {
+		var withdrawTrx WithdrawTransaction
+		bytes, _ := json.Marshal(transactionData[1])
+		err := json.Unmarshal(bytes, &withdrawTrx)
+		if err != nil {
+			continue
+		}
+
+		for _, one_op := range withdrawTrx.Operations {
+
+			if one_op[0].(float64) == float64(61) {
+				var withdrawOp WithdrawOp
+				bytes, _ := json.Marshal(one_op[1])
+				err = json.Unmarshal(bytes, &withdrawOp)
+				if err != nil {
+					continue
+				}
+				resp = append(resp, withdrawOp)
+			}
+		}
+	}
+
+	return &resp, nil
 }

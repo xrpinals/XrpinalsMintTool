@@ -415,3 +415,49 @@ func bytesToNumber(bs []byte) uint32 {
 	}
 	return (uint32(bs[0]) << 24) + (uint32(bs[1]) << 16) + (uint32(bs[2]) << 8) + uint32(bs[3])
 }
+
+type CrossChainWithdrawOperation struct {
+	Fee               Asset   `json:"fee"`
+	WithdrawAccount   Address `json:"withdraw_account"`
+	Amount            string  `json:"amount"`
+	AssetSymbol       string  `json:"asset_symbol"`
+	AssetId           string  `json:"asset_id"`
+	CrossChainAccount string  `json:"crosschain_account"`
+	Memo              string  `json:"memo"`
+}
+
+func (to *CrossChainWithdrawOperation) SetValue(withdrawAddr string,
+	amount string, assetSymbol string, assetId string, crossChainAccount string, memo string) error {
+	to.Fee.SetDefault()
+
+	withdrawAddrHex, err := AddrToHexAddr(withdrawAddr)
+	if err != nil {
+		return err
+	}
+	withdrawAddrBytes, _ := hex.DecodeString(withdrawAddrHex)
+	to.WithdrawAccount.SetBytes(withdrawAddrBytes)
+
+	to.Amount = amount
+	to.AssetSymbol = assetSymbol
+	to.AssetId = assetId
+	to.CrossChainAccount = crossChainAccount
+	to.Memo = memo
+	return nil
+}
+
+func (to *CrossChainWithdrawOperation) Pack() []byte {
+	bytesRet := make([]byte, 0)
+	var assetType Asset
+	assetType.SetDefault()
+	bytesFee := to.Fee.Pack()
+	bytesRet = append(bytesRet, bytesFee...)
+	bytesRet = append(bytesRet, byte(UseAddressPrefix))
+	bytesRet = append(bytesRet, to.WithdrawAccount[:]...)
+	bytesRet = append(bytesRet, PackString(to.Amount)...)
+	bytesRet = append(bytesRet, PackString(to.AssetSymbol)...)
+	bytesRet = append(bytesRet, PackUint8(uint8(assetType.AssetIdNum))...)
+	bytesRet = append(bytesRet, PackString(to.CrossChainAccount)...)
+	bytesRet = append(bytesRet, PackString(to.Memo)...)
+
+	return bytesRet
+}

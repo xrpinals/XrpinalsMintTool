@@ -165,3 +165,57 @@ last mint time: "2023-12-18T15:30:00"
 
 ```
 ![](https://github.com/xrpinals/XrpinalsMintTool/blob/main/assets/get-mint-info.png)
+
+
+* Withdraw Btc Asset
+
+```
+./XrpinalsMintTool withdraw -h
+
+Usage of mint:
+  Usage of transfer:
+  -fromAddr string
+        sender address (must be imported before)
+  -toAddr string
+        the destination address to which you withdrew your funds
+  -amount string
+        your btc withdrawal amount. empty means withdraw all
+  -memo string
+        Remarks on Withdrawal Transactions
+
+
+./XrpinalsMintTool withdraw -fromAddr mfhGJnP5T7A5kYDJNxnHozxrVzC7WKHzKs -toAddr mnUbdaJcTiBUARHGMZpQ5dVkrcj1XUMame -memo test -amount 0.02
+
+transfer success, txHash: 6eb8918df731f29952cc00a4ae77c0a07e907742
+
+```
+
+
+* Query Withdraw Btc Info
+
+```
+./XrpinalsMintTool query_withdraw 
+This command will list all the pending and in-process withdrawals on the network.
+
+
+./XrpinalsMintTool query_withdraw
+
+[Info]:  Waiting Withdrawal Info
+
+----------------------------------------
+
+[Info]:  Processing Withdrawal Info
+[Info]:  Withdrawal account: mhk8YnXVEe6KdTNyoH4GRsoVYdHUaJLLaL Withdrawal amount: 0.002 Withdrawal to account: mjd8EBD4Q4mQePbTpysVjfYcAjyLzCxbTS
+
+[Info]:  Withdrawal account: mhk8YnXVEe6KdTNyoH4GRsoVYdHUaJLLaL Withdrawal amount: 0.002 Withdrawal to account: mjd8EBD4Q4mQePbTpysVjfYcAjyLzCxbTS
+
+[Info]:  Withdrawal account: mjd8EBD4Q4mQePbTpysVjfYcAjyLzCxbTS Withdrawal amount: 0.001 Withdrawal to account: mhk8YnXVEe6KdTNyoH4GRsoVYdHUaJLLaL
+
+[Info]:  Withdrawal account: mjd8EBD4Q4mQePbTpysVjfYcAjyLzCxbTS Withdrawal amount: 0.0001 Withdrawal to account: mjd8EBD4Q4mQePbTpysVjfYcAjyLzCxbTS
+
+[Info]:  Withdrawal account: mjd8EBD4Q4mQePbTpysVjfYcAjyLzCxbTS Withdrawal amount: 0.001 Withdrawal to account: mjd8EBD4Q4mQePbTpysVjfYcAjyLzCxbTS
+
+[Info]:  Withdrawal account: mjd8EBD4Q4mQePbTpysVjfYcAjyLzCxbTS Withdrawal amount: 0.001 Withdrawal to account: mjd8EBD4Q4mQePbTpysVjfYcAjyLzCxbTS
+
+
+```

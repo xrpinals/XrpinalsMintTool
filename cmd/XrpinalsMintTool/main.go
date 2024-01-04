@@ -13,6 +13,7 @@ import (
 	"github.com/xrpinals/XrpinalsMintTool/utils"
 	"math"
 	"os"
+	"regexp"
 )
 
 func appInit() {
@@ -264,6 +265,102 @@ func main() {
 		fmt.Println(utils.BoldGreen("[Result]: "), utils.Bold("Mint amount total:"), utils.Bold(amountDecimal.String()))
 		fmt.Println(utils.BoldGreen("[Result]: "), utils.Bold("Mint count:"), utils.Bold(mintInfo.Result.MintCount))
 		fmt.Println(utils.BoldGreen("[Result]: "), utils.Bold("Last mint time:"), utils.Bold(mintInfo.Result.Time))
+
+	} else if os.Args[1] == "withdraw" {
+		fs := flag.NewFlagSet("withdraw", flag.ExitOnError)
+
+		var fromAddr string
+		var toAddr string
+		var amount string
+		var memo string
+		var keyWif string
+		fs.StringVar(&fromAddr, "fromAddr", "", "your address (must be imported before)")
+		fs.StringVar(&toAddr, "toAddr", "", "the destination address to which you withdrew your funds")
+		fs.StringVar(&amount, "amount", "", "your btc withdrawal amount. empty means withdraw all")
+		fs.StringVar(&memo, "memo", "", "Remarks on Withdrawal Transactions")
+
+		err := fs.Parse(os.Args[2:])
+		if err != nil {
+			fmt.Println(utils.BoldRed("[Error]: "), utils.FgWhiteBgRed(err.Error()))
+			return
+		}
+
+		balance, err := utils.GetAddressBalance(conf.GetConfig().WalletRpcUrl, fromAddr, "1.3.0")
+		if err != nil {
+			fmt.Println(utils.BoldRed("[Error]: "), utils.FgWhiteBgRed(err.Error()))
+			return
+		}
+
+		balanceDecimal := decimal.NewFromBigInt(balance, 0)
+		precisionDecimal := decimal.NewFromFloat(math.Pow(10, float64(8)))
+		balanceDecimal = balanceDecimal.Div(precisionDecimal)
+		if amount != "" {
+			amount = balanceDecimal.StringFixed(8)
+		} else {
+			matched, _ := regexp.MatchString(`^\d+\.\d{0,8}$`, amount)
+			if !matched {
+				fmt.Println(utils.BoldRed("[Error]: "), utils.FgWhiteBgRed("Withdrawal of cash is not legal"))
+				return
+			}
+			amountDecimal, err := decimal.NewFromString(amount)
+			if err != nil {
+				fmt.Println(utils.BoldRed("[Error]: "), utils.FgWhiteBgRed(err.Error()))
+				return
+			}
+			if amountDecimal.Cmp(balanceDecimal) > 0 {
+				fmt.Println(utils.BoldRed("[Error]: "), utils.FgWhiteBgRed("The btc balance is insufficient."))
+				return
+			}
+		}
+
+		ok, err := key.IsAddressExisted(fromAddr)
+		if err != nil {
+			fmt.Println(utils.BoldRed("[Error]: "), utils.FgWhiteBgRed(err.Error()))
+			return
+		}
+
+		if ok {
+			keyWif, err = key.GetAddressKey(fromAddr)
+			if err != nil {
+				fmt.Println(utils.BoldRed("[Error]: "), utils.FgWhiteBgRed(err.Error()))
+				return
+			}
+		} else {
+			fmt.Println(utils.BoldRed("[Error]: "), utils.Bold("Address"), utils.FgWhiteBgBlue(fromAddr),
+				utils.Bold("is"), utils.BoldRed("NOT"), utils.Bold("the Storage!"))
+			return
+		}
+		txHash, err := tx_builder.Withdraw(fromAddr, toAddr, amount, memo, keyWif)
+
+		if err != nil {
+			fmt.Println(utils.BoldRed("[Error]: "), utils.FgWhiteBgRed(err.Error()))
+			return
+		}
+
+		fmt.Println(utils.BoldYellow("[Info]: "), utils.Bold("Withdrawal transaction broadcast successful, please wait for cross-chain confirmation (probably successful within 2 days), txHash:"), utils.FgWhiteBgBlue(txHash))
+
+	} else if os.Args[1] == "query_withdraw" {
+		allData, err := utils.GetWaitCrosschainInfo(conf.GetConfig().WalletRpcUrl, 0)
+		if err != nil {
+			fmt.Println(utils.BoldRed("[Error]: "), utils.FgWhiteBgRed(err.Error()))
+			return
+		}
+		fmt.Println(utils.BoldYellow("[Info]: "), utils.Bold("Waiting Withdrawal Info"))
+		for _, oneData := range *allData {
+			fmt.Println(utils.BoldYellow("[Info]: "), utils.Bold("Withdrawal account:"), utils.FgWhiteBgBlue(oneData.WithdrawAccount), utils.Bold("Withdrawal amount:"), utils.FgWhiteBgBlue(oneData.Amount), utils.Bold("Withdrawal to account:"), utils.FgWhiteBgBlue(oneData.CrosschainAccount))
+			fmt.Println()
+		}
+
+		allData, err = utils.GetWaitCrosschainInfo(conf.GetConfig().WalletRpcUrl, 1)
+		if err != nil {
+			fmt.Println(utils.BoldRed("[Error]: "), utils.FgWhiteBgRed(err.Error()))
+			return
+		}
+		fmt.Println(utils.BoldYellow("\n----------------------------------------\n"), utils.BoldYellow("[Info]: "), utils.Bold("Processing Withdrawal Info"))
+		for _, oneData := range *allData {
+			fmt.Println(utils.BoldYellow("[Info]: "), utils.Bold("Withdrawal account:"), utils.FgWhiteBgBlue(oneData.WithdrawAccount), utils.Bold("Withdrawal amount:"), utils.FgWhiteBgBlue(oneData.Amount), utils.Bold("Withdrawal to account:"), utils.FgWhiteBgBlue(oneData.CrosschainAccount))
+			fmt.Println()
+		}
 
 	}
 }

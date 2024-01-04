@@ -12,9 +12,10 @@ const (
 )
 
 const (
-	TxOpTypeTransfer    = 0
-	TxOpTypeAccountBind = 10
-	TxOpTypeMint        = 17
+	TxOpTypeTransfer           = 0
+	TxOpTypeAccountBind        = 10
+	TxOpTypeMint               = 17
+	TxOpTypeCrossChainWithdraw = 61
 )
 
 func BuildTxTransfer(refBlockNum uint16, refBlockPrefix uint32,
@@ -96,6 +97,38 @@ func BuildTxAccountBind(refBlockNum uint16, refBlockPrefix uint32,
 	}
 	var opPair OperationPair
 	opPair[0] = byte(TxOpTypeAccountBind)
+	opPair[1] = &op
+	tx.Operations = append(tx.Operations, opPair)
+
+	txPacked := tx.Pack()
+
+	s256 := sha256.New()
+	_, err = s256.Write(txPacked)
+	txHash := s256.Sum(nil)
+
+	return hex.EncodeToString(txHash[0:20]), txPacked, &tx, nil
+}
+
+func BuildTxWithdraw(refBlockNum uint16, refBlockPrefix uint32,
+	withdraw_account string, amount string, toAddr string, memo string) (string, []byte, *Transaction, error) {
+
+	var tx Transaction
+	tx.RefBlockNum = refBlockNum
+	tx.RefBlockPrefix = refBlockPrefix
+
+	tx.Expiration = UTCTime(time.Now().Unix() + ExpireSeconds)
+	tx.Extensions = make([]interface{}, 0)
+	tx.Signatures = make([]Signature, 0)
+
+	var op CrossChainWithdrawOperation
+	var defaultAsset Asset
+	defaultAsset.SetDefault()
+	err := op.SetValue(withdraw_account, amount, "BTC", defaultAsset.AssetId, toAddr, memo)
+	if err != nil {
+		return "", nil, nil, err
+	}
+	var opPair OperationPair
+	opPair[0] = byte(TxOpTypeCrossChainWithdraw)
 	opPair[1] = &op
 	tx.Operations = append(tx.Operations, opPair)
 

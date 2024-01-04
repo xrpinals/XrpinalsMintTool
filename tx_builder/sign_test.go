@@ -245,3 +245,44 @@ func TestBroadcastTx3(t *testing.T) {
 	}
 	fmt.Println("BroadcastTx2 txHash:", txHash)
 }
+
+func TestBroadcastTx4(t *testing.T) {
+	refBlockNum, refBlockPrefix, err := utils.GetRefBlockInfo(walletUrl)
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	fmt.Println(refBlockNum)
+	fmt.Println(refBlockPrefix)
+
+	chainId, err := utils.GetChainId(walletUrl)
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	fmt.Println(chainId)
+	keyWif := "5JF7asAXBFzGbnLDdLyKqrkRGGKcSJByU22fvzejdU6TdLGimdf"
+
+	txHashCalc, txBytes, tx, _ := BuildTxWithdraw(refBlockNum, refBlockPrefix, "mjd8EBD4Q4mQePbTpysVjfYcAjyLzCxbTS", "0.00001", "mntdQtqHAoMWDTe6xtUUKoEmpR2rYEHcvR", "xxxxxx")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	fmt.Println("BuildTxAccountBind txHash:", txHashCalc)
+
+	fmt.Println("BuildTxBytes", hex.EncodeToString(txBytes))
+	txSig, txSigned, err := SignTx(chainId, tx, keyWif)
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	fmt.Println("SignTx2 Sig:", hex.EncodeToString(txSig))
+
+	txJson, err := json.Marshal(*txSigned)
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	fmt.Println("SignTx2 Tx:", string(txJson))
+
+	txHash, err := utils.BroadcastTx(walletUrl, txSigned)
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	fmt.Println("BroadcastTx2 txHash:", txHash)
+}

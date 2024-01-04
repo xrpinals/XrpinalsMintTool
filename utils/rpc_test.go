@@ -88,3 +88,30 @@ func TestGetAddressMintInfo(t *testing.T) {
 
 	fmt.Println(*result)
 }
+
+func TestGetWaitCrosschainInfo(t *testing.T) {
+
+	allData, err := GetWaitCrosschainInfo(walletUrl, 0)
+	if err != nil {
+		fmt.Println(BoldRed("[Error]: "), FgWhiteBgRed(err.Error()))
+		return
+	}
+	fmt.Println(BoldYellow("[Info]: "), Bold("Waiting Withdrawal Info"))
+	for _, oneData := range *allData {
+		fmt.Println(BoldYellow("[Info]: "), Bold("Withdrawal account:"), FgWhiteBgBlue(oneData.WithdrawAccount), Bold("Withdrawal amount:"), FgWhiteBgBlue(oneData.Amount), Bold("Withdrawal to account:"), FgWhiteBgBlue(oneData.CrosschainAccount))
+		fmt.Println()
+	}
+
+	allData, err = GetWaitCrosschainInfo(walletUrl, 1)
+	if err != nil {
+		fmt.Println(BoldRed("[Error]: "), FgWhiteBgRed(err.Error()))
+		return
+	}
+	fmt.Println(BoldYellow("\n----------------------------------------\n"))
+	fmt.Println(BoldYellow("[Info]: "), Bold("Processing Withdrawal Info"))
+	for _, oneData := range *allData {
+		fmt.Println(BoldYellow("[Info]: "), Bold("Withdrawal account:"), FgWhiteBgBlue(oneData.WithdrawAccount), Bold("Withdrawal amount:"), FgWhiteBgBlue(oneData.Amount), Bold("Withdrawal to account:"), FgWhiteBgBlue(oneData.CrosschainAccount))
+		fmt.Println()
+	}
+
+}
