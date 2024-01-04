@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/xrpinals/XrpinalsMintTool/utils"
-	"io/ioutil"
+	"os"
 	"sync"
 )
 
@@ -14,9 +14,11 @@ var (
 )
 
 type Config struct {
-	WalletRpcUrl string     `json:"walletRpcUrl"`
-	Logs         LogsConfig `json:"logs"`
-	Data         DataConfig `json:"data"`
+	WalletRpcUrl string       `json:"walletRpcUrl"`
+	Logs         LogsConfig   `json:"logs"`
+	Data         DataConfig   `json:"data"`
+	Server       ServerConfig `json:"server"`
+	Gpu          bool         `json:"gpu"`
 }
 
 type LogsConfig struct {
@@ -29,10 +31,14 @@ type LogsConfig struct {
 type DataConfig struct {
 	DataPath string `json:"dataPath"`
 }
+type ServerConfig struct {
+	IP   string `json:"IP"`
+	Port string `json:"Port"`
+}
 
 func GetConfig() *Config {
 	configOnce.Do(func() {
-		bytes, err := ioutil.ReadFile("conf.json")
+		bytes, err := os.ReadFile("conf.json")
 		if err != nil {
 			fmt.Println(utils.BoldRed("[Error]: "), utils.FgWhiteBgRed(err.Error()))
 			return

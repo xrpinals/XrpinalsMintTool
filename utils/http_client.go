@@ -3,7 +3,7 @@ package utils
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"time"
 )
@@ -49,7 +49,7 @@ func (h HttpClient) HttpPost(url string, rpcReq RpcReq) ([]byte, error) {
 		return nil, err
 	}
 
-	body, err := ioutil.ReadAll(rs.Body)
+	body, err := io.ReadAll(rs.Body)
 	if err != nil {
 		_ = rs.Body.Close()
 		return nil, err

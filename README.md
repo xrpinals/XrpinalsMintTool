@@ -15,6 +15,10 @@
   ```
   git clone https://github.com/xrpinals/XrpinalsMintTool.git
   cd XrpinalsMintTool
+  cd utils/x17
+  cmake .
+  make
+  cd ../..
   make XrpinalsMintTool_clean
   make XrpinalsMintTool
 
@@ -219,3 +223,19 @@ This command will list all the pending and in-process withdrawals on the network
 
 
 ```
+### How To Use GPU
+
+
+Change server ip port in config
+
+Change gpu to true in config
+```
+e.g.
+"server":{
+    "IP": "0.0.0.0",
+    "Port": "42123"
+  },
+"gpu": true
+```
+
+Get GPU tool at https://github.com/xrpinals/XpsMiner

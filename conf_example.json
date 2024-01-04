@@ -8,5 +8,10 @@
   },
   "data": {
     "dataPath": "./data"
-  }
+  },
+  "server":{
+    "IP": "127.0.0.1",
+    "Port": "42123"
+  },
+  "gpu": true
 }
