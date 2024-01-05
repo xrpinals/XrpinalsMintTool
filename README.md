@@ -101,7 +101,7 @@ BTC deposit address:  2MvSkSdKtHC253TnDmmBj8uwWjcyeQ5sQkK
 ![](https://github.com/xrpinals/XrpinalsMintTool/blob/main/assets/get-deposit-address.png)
 
 
-* Mint Brc20 Asset
+* Mint XPS Asset
 
 ```
 ./XrpinalsMintTool mint -h
@@ -113,7 +113,7 @@ Usage of mint:
         asset name you want to mint
 
 
-./XrpinalsMintTool mint -addr mnUbdaJcTiBUARHGMZpQ5dVkrcj1XUMame -asset XX
+./XrpinalsMintTool mint -addr mnUbdaJcTiBUARHGMZpQ5dVkrcj1XUMame -asset XPS
 
 mining success, txHash: 03d8216ce49753cbe6ae7a1a65e08b4fe841d5b6
 
@@ -122,7 +122,7 @@ mining success, txHash: 03d8216ce49753cbe6ae7a1a65e08b4fe841d5b6
 
 
 
-* Transfer Brc20 Asset
+* Transfer BTC/XPS Asset
 
 ```
 ./XrpinalsMintTool transfer -h
@@ -148,7 +148,7 @@ transfer success, txHash: 6eb8918df731f29952cc00a4ae77c0a07e907742
 
 
 
-* Query Mint Brc20 Info
+* Query XPS Mint Info
 
 ```
 ./XrpinalsMintTool get_mint_info -h
@@ -160,7 +160,7 @@ Usage of get_mint_info:
         asset name you want to query
 
 
-./XrpinalsMintTool get_mint_info -addr mnUbdaJcTiBUARHGMZpQ5dVkrcj1XUMame -asset XX
+./XrpinalsMintTool get_mint_info -addr mnUbdaJcTiBUARHGMZpQ5dVkrcj1XUMame -asset XPS
 
 mint info:
 mint amount: 0
@@ -171,7 +171,7 @@ last mint time: "2023-12-18T15:30:00"
 ![](https://github.com/xrpinals/XrpinalsMintTool/blob/main/assets/get-mint-info.png)
 
 
-* Withdraw Btc Asset
+* Withdraw BTC Asset To layer one
 
 ```
 ./XrpinalsMintTool withdraw -h
@@ -195,7 +195,7 @@ transfer success, txHash: 6eb8918df731f29952cc00a4ae77c0a07e907742
 ```
 
 
-* Query Withdraw Btc Info
+* Query BTC Withdraw Info
 
 ```
 ./XrpinalsMintTool query_withdraw 
@@ -210,15 +210,10 @@ This command will list all the pending and in-process withdrawals on the network
 
 [Info]:  Processing Withdrawal Info
 [Info]:  Withdrawal account: mhk8YnXVEe6KdTNyoH4GRsoVYdHUaJLLaL Withdrawal amount: 0.002 Withdrawal to account: mjd8EBD4Q4mQePbTpysVjfYcAjyLzCxbTS
-
 [Info]:  Withdrawal account: mhk8YnXVEe6KdTNyoH4GRsoVYdHUaJLLaL Withdrawal amount: 0.002 Withdrawal to account: mjd8EBD4Q4mQePbTpysVjfYcAjyLzCxbTS
-
 [Info]:  Withdrawal account: mjd8EBD4Q4mQePbTpysVjfYcAjyLzCxbTS Withdrawal amount: 0.001 Withdrawal to account: mhk8YnXVEe6KdTNyoH4GRsoVYdHUaJLLaL
-
 [Info]:  Withdrawal account: mjd8EBD4Q4mQePbTpysVjfYcAjyLzCxbTS Withdrawal amount: 0.0001 Withdrawal to account: mjd8EBD4Q4mQePbTpysVjfYcAjyLzCxbTS
-
 [Info]:  Withdrawal account: mjd8EBD4Q4mQePbTpysVjfYcAjyLzCxbTS Withdrawal amount: 0.001 Withdrawal to account: mjd8EBD4Q4mQePbTpysVjfYcAjyLzCxbTS
-
 [Info]:  Withdrawal account: mjd8EBD4Q4mQePbTpysVjfYcAjyLzCxbTS Withdrawal amount: 0.001 Withdrawal to account: mjd8EBD4Q4mQePbTpysVjfYcAjyLzCxbTS
 
 
