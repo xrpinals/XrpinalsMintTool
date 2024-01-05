@@ -3,6 +3,7 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/xrpinals/XrpinalsMintTool/property"
 	"math/big"
 	"reflect"
 	"strconv"
@@ -424,11 +425,10 @@ func GetWaitCrosschainInfo(url string, trxType int) (rsp *[]WithdrawOp, err erro
 			continue
 		}
 
-		for _, one_op := range withdrawTrx.Operations {
-
-			if one_op[0].(float64) == float64(61) {
+		for _, oneOp := range withdrawTrx.Operations {
+			if oneOp[0].(float64) == float64(property.TxOpTypeCrossChainWithdraw) {
 				var withdrawOp WithdrawOp
-				bytes, _ := json.Marshal(one_op[1])
+				bytes, _ := json.Marshal(oneOp[1])
 				err = json.Unmarshal(bytes, &withdrawOp)
 				if err != nil {
 					continue

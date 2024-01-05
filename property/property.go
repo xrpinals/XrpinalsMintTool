@@ -10,6 +10,13 @@ const (
 	BaseAssetPrecision = 100000000
 )
 
+const (
+	TxOpTypeTransfer           = 0
+	TxOpTypeAccountBind        = 10
+	TxOpTypeMint               = 17
+	TxOpTypeCrossChainWithdraw = 61
+)
+
 func RFC3339ToUTC(timeFormatStr string) (uint64, error) {
 	t, err := time.Parse(
 		time.RFC3339, timeFormatStr+"+00:00")

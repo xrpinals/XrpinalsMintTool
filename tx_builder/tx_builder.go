@@ -3,19 +3,13 @@ package tx_builder
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"github.com/xrpinals/XrpinalsMintTool/property"
 	"time"
 )
 
 const (
 	// ExpireSeconds tx expire seconds
 	ExpireSeconds = 43200
-)
-
-const (
-	TxOpTypeTransfer           = 0
-	TxOpTypeAccountBind        = 10
-	TxOpTypeMint               = 17
-	TxOpTypeCrossChainWithdraw = 61
 )
 
 func BuildTxTransfer(refBlockNum uint16, refBlockPrefix uint32,
@@ -35,7 +29,7 @@ func BuildTxTransfer(refBlockNum uint16, refBlockPrefix uint32,
 		return "", nil, nil, err
 	}
 	var opPair OperationPair
-	opPair[0] = byte(TxOpTypeTransfer)
+	opPair[0] = byte(property.TxOpTypeTransfer)
 	opPair[1] = &op
 	tx.Operations = append(tx.Operations, opPair)
 
@@ -66,7 +60,7 @@ func BuildTxMint(refBlockNum uint16, refBlockPrefix uint32,
 		return "", nil, nil, err
 	}
 	var opPair OperationPair
-	opPair[0] = byte(TxOpTypeMint)
+	opPair[0] = byte(property.TxOpTypeMint)
 	opPair[1] = &op
 	tx.Operations = append(tx.Operations, opPair)
 
@@ -96,7 +90,7 @@ func BuildTxAccountBind(refBlockNum uint16, refBlockPrefix uint32,
 		return "", nil, nil, err
 	}
 	var opPair OperationPair
-	opPair[0] = byte(TxOpTypeAccountBind)
+	opPair[0] = byte(property.TxOpTypeAccountBind)
 	opPair[1] = &op
 	tx.Operations = append(tx.Operations, opPair)
 
@@ -110,7 +104,7 @@ func BuildTxAccountBind(refBlockNum uint16, refBlockPrefix uint32,
 }
 
 func BuildTxWithdraw(refBlockNum uint16, refBlockPrefix uint32,
-	withdraw_account string, amount string, toAddr string, memo string) (string, []byte, *Transaction, error) {
+	withdrawAccount string, amount string, toAddr string, memo string) (string, []byte, *Transaction, error) {
 
 	var tx Transaction
 	tx.RefBlockNum = refBlockNum
@@ -123,12 +117,12 @@ func BuildTxWithdraw(refBlockNum uint16, refBlockPrefix uint32,
 	var op CrossChainWithdrawOperation
 	var defaultAsset Asset
 	defaultAsset.SetDefault()
-	err := op.SetValue(withdraw_account, amount, "BTC", defaultAsset.AssetId, toAddr, memo)
+	err := op.SetValue(withdrawAccount, amount, "BTC", defaultAsset.AssetId, toAddr, memo)
 	if err != nil {
 		return "", nil, nil, err
 	}
 	var opPair OperationPair
-	opPair[0] = byte(TxOpTypeCrossChainWithdraw)
+	opPair[0] = byte(property.TxOpTypeCrossChainWithdraw)
 	opPair[1] = &op
 	tx.Operations = append(tx.Operations, opPair)
 
