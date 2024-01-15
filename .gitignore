@@ -22,10 +22,13 @@ go.work
 
 *.xml
 
+*.bak
+
 .idea
 
 conf.json
 
 log
 data
+utils/x17/*
 
